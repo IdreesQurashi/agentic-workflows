@@ -1,0 +1,29 @@
+# Workspace Token Firewall for Agentic Workflows
+# Blocks raw HTML, CSV lead databases, credentials, and temp logs
+
+# Raw HTML
+insta.html
+archive/raw_html/
+*.html
+
+# Lead databases and CSV assets
+data/
+*.csv
+*.db
+*.sqlite
+*.sqlite3
+*.jsonl
+
+# Credentials and secrets
+credentials.json
+token.json
+.env
+
+# Ephemeral data and logs
+.tmp/
+*.log
+*.lock
+
+# Archives and client assets
+archive/
+project_a1_vehicle_wraps/

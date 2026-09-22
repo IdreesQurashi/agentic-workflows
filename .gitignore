@@ -1,0 +1,25 @@
+# Environment and sensitive secrets
+.env
+.env.*
+credentials.json
+token.json
+*.pem
+*.key
+
+# Temporary and runtime state
+.tmp/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Data and client vaults
+data/
+archive/
+scratch/
+
+# OS and IDE artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
