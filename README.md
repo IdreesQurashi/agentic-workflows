@@ -44,40 +44,72 @@ Every agent and subagent operating inside this engine is hard bound to the Enki 
 
 ## 3. Key Engine Components
 
-### A. Distributed Retry Engine (`execution/_retry.py`)
-Implements exponential backoff with full decorrelated jitter to gracefully survive 429 rate limits, socket timeouts, and network drops across high throughput API loops.
+### A. Layer 1: Directives (`directives/`)
+Natural language SOPs defining constraints, schemas, and operational boundaries:
+* `master_operating_directive.md`: 18 Operational Laws of Autonomous Systems, Karpathy boundaries, and role governance.
+* `autonomous_outbound_pipeline.md`: Zero Bounce OS protocol, DNS MX verification, and randomized pacing rules.
+* `high_velocity_copilot.md`: 2 hour client operational shift SOP, ISO step evidence, and 11:55 AM hard stop triggers.
+* `runtime_eval_gating.md`: Evaluation Driven Development (EDD) rubric and 85% confidence floor specifications.
+* `n8n_enterprise_vault.md`: n8n webhook synchronizations, vector database RAG nodes, and error handling.
 
-### B. High Velocity Operations Copilot (`execution/automation/mak_session.py`)
-Specialized real time operational tracker for 2 hour client execution shifts:
-* Automated ISO timestamp step evidence logging.
-* Banned corporate jargon and filler phrase scrubbing.
-* Automatic export of plan first notes and daily client reports to local persistent storage.
+### B. Layer 2: Orchestration (`orchestration/`)
+The cognitive decision making, routing, and safety evaluation engine:
+* `agent_kernel.py`: Enki Kernel runtime managing directive loading, state machines, and Two Strike Task Breaker governance.
+* `workflow_router.py`: Multi agent router mapping natural language intents to specific execution pipelines.
+* `eval_judge.py`: Runtime LLM as a Judge evaluator enforcing composite score floors before external action.
+* `token_optimizer.py`: Token economy manager offloading bulk evaluation tasks to external Gemini worker pools.
 
-### C. Master Operating Directives (`directives/master_operating_directive.md`)
-The single source of truth defining:
-* The 18 Operational Laws of Autonomous Systems (Karpathy boundaries, checkpoint persistence, self annealing loops).
-* The 4 whitelisted enterprise roles (AI Automation, Agentic Systems, Prompt Engineering, n8n Specialization).
-* Zero Bounce OS deliverability filters with 900 to 1800 second randomized send pacing.
+### C. Layer 3: Execution (`execution/`)
+Deterministic Python tools executing operations with zero hallucination risk:
+* `core/retry_engine.py`: Base 2 exponential backoff retry engine with decorrelated jitter.
+* `copilot/mak_session.py`: Automated ISO timestamp logger, corporate jargon scrubber, and client report exporter.
+* `outbound/zero_bounce_dispatcher.py`: Paced daemon enforcing randomized 900 to 1800 second gaps and deduplication.
+* `evals/runtime_eval_gater.py`: Structured Pydantic evaluation models and confidence score gating.
+* `integrations/n8n_client.py`: API and webhook dispatcher for n8n workflow management.
 
 ---
 
 ## 4. Repository Structure
 
 ```
-├── .agents/                   # Custom agent definitions and persistent skills
-│   └── skills/                # Domain specific skills (mak_copilot, tdd_engine, etc.)
-├── AGENTS.md                  # Master agent execution instructions and kernel laws
-├── directives/                # Layer 1 SOPs and governance directives
+agentic-workflows/
+├── directives/                        # Layer 1: The Instruction Set (Markdown SOPs)
 │   ├── master_operating_directive.md
-│   └── workflows/
-├── execution/                 # Layer 3 deterministic Python scripts
-│   ├── _retry.py              # Exponential backoff retry engine
-│   └── automation/            # Operational scripts and session monitors
-├── harness/                   # Cognitive auditing harnesses and eval loops
-├── CLAUDE.md                  # Mirrored instruction kernel
-├── GEMINI.md                  # Mirrored instruction kernel
-├── requirements.txt           # Python dependencies
-└── .gitignore                 # Airtight secret and data protection
+│   ├── autonomous_outbound_pipeline.md
+│   ├── high_velocity_copilot.md
+│   ├── runtime_eval_gating.md
+│   └── n8n_enterprise_vault.md
+│
+├── orchestration/                     # Layer 2: Decision, Routing & Evaluation Engine
+│   ├── __init__.py
+│   ├── agent_kernel.py
+│   ├── workflow_router.py
+│   ├── eval_judge.py
+│   └── token_optimizer.py
+│
+├── execution/                         # Layer 3: Deterministic Execution Tools
+│   ├── __init__.py
+│   ├── core/
+│   │   └── retry_engine.py
+│   ├── copilot/
+│   │   └── mak_session.py
+│   ├── outbound/
+│   │   └── zero_bounce_dispatcher.py
+│   ├── evals/
+│   │   └── runtime_eval_gater.py
+│   └── integrations/
+│       └── n8n_client.py
+│
+├── harness/                           # Cognitive auditing and self annealing harness
+│   ├── crash_capture.py
+│   ├── patch_validator.py
+│   └── executor.py
+│
+├── AGENTS.md                          # Master agent execution instructions
+├── CLAUDE.md                          # Mirrored instruction kernel
+├── GEMINI.md                          # Mirrored instruction kernel
+├── requirements.txt                   # Production dependencies
+└── .gitignore                         # Credentials and data isolation
 ```
 
 ---

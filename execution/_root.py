@@ -8,29 +8,25 @@ from pathlib import Path
 # Resolves to Agentic Workflows root directory
 ROOT_DIR = Path(__file__).resolve().parent.parent
 
-# Data directory trees
-DATA_DIR = ROOT_DIR / "data"
+# Core DOE architecture paths
+DIRECTIVES_DIR = ROOT_DIR / "directives"
+ORCHESTRATION_DIR = ROOT_DIR / "orchestration"
+EXECUTION_DIR = ROOT_DIR / "execution"
+HARNESS_DIR = ROOT_DIR / "harness"
+LEGACY_DIR = ROOT_DIR / "legacy_archive"
+TMP_DIR = ROOT_DIR / ".tmp"
+
+# Data and client archive resolution with legacy fallback
+DATA_DIR = ROOT_DIR / "data" if (ROOT_DIR / "data").exists() else (LEGACY_DIR / "data")
 DATA_LEADS_DIR = DATA_DIR / "leads"
 DATA_DOSSIERS_DIR = DATA_DIR / "dossiers"
 DATA_WORKFLOWS_DIR = DATA_DIR / "workflows"
-
-# Harness and temp directories
-HARNESS_DIR = ROOT_DIR / "harness"
-TMP_DIR = ROOT_DIR / ".tmp"
-ARCHIVE_DIR = ROOT_DIR / "archive"
+ARCHIVE_DIR = ROOT_DIR / "archive" if (ROOT_DIR / "archive").exists() else (LEGACY_DIR / "archive")
 
 # Auth and config files at root
 ENV_FILE = ROOT_DIR / ".env"
-CREDENTIALS_FILE = ROOT_DIR / "credentials.json"
-TOKEN_FILE = ROOT_DIR / "token.json"
-
-# Canonical lead data paths
-LEADS_100K = DATA_LEADS_DIR / "filtered_leads_100k.csv"
-LEADS_100_IG = DATA_LEADS_DIR / "100_instagram_leads.csv"
-LEADS_QUALIFIED = DATA_LEADS_DIR / "final_qualified_leads.csv"
-LEADS_FILTERED = DATA_LEADS_DIR / "filtered_instagrams.csv"
-LEADS_DB = DATA_LEADS_DIR / "instagram_leads.db"
-URLS_FILE = DATA_LEADS_DIR / "urls.txt"
+CREDENTIALS_FILE = ROOT_DIR / "credentials.json" if (ROOT_DIR / "credentials.json").exists() else (LEGACY_DIR / "credentials.json")
+TOKEN_FILE = ROOT_DIR / "token.json" if (ROOT_DIR / "token.json").exists() else (LEGACY_DIR / "token.json")
 
 # External client work paths
 MAK_DIR = Path("/home/idrees/MAK")

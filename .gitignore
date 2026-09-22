@@ -17,6 +17,7 @@ __pycache__/
 data/
 archive/
 scratch/
+legacy_archive/
 
 # OS and IDE artifacts
 .DS_Store
