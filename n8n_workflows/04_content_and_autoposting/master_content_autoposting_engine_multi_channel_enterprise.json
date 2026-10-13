@@ -1,0 +1,980 @@
+{
+  "updatedAt": "2026-09-22T22:40:28.625Z",
+  "createdAt": "2026-09-18T04:16:14.518Z",
+  "id": "rJ1KnC3eNtmxUlXY",
+  "name": "Master Content Autoposting Engine (Multi-Channel Enterprise)",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## MASTER AUTOPOSTING ENGINE (ENTERPRISE ARCHITECTURE)\n\n### CHANNELS SUPPORTED:\n- **YouTube** (Long-form & Shorts via native resumable upload)\n- **Instagram** (Feed & Reels via Meta Graph API container + publish)\n- **Facebook** (Page Feed, Photos & Videos)\n- **LinkedIn** (B2B Shares & Posts)\n- **TikTok** (Content Posting API - Inbox / Direct Upload)\n- **Pinterest** (Pins with public asset links)\n\n### CRUCIAL SETUP INSTRUCTIONS:\n1. **Google Sheets**: Connect your Google Sheets account to nodes reading `ContentQueue` and writing to `PostLog`.\n2. **Google Drive**: Connect Google Drive account to host media publicly for Instagram & Pinterest.\n3. **Meta / Instagram / Facebook**: Provide `YOUR_META_PAGE_ACCESS_TOKEN`, `YOUR_FB_PAGE_ID`, and `YOUR_IG_BUSINESS_ACCOUNT_ID`.\n4. **LinkedIn**: Attach your LinkedIn OAuth2 credential.\n5. **YouTube**: Attach Google OAuth2 with YouTube Upload scopes.\n6. **TikTok**: Attach TikTok Developer Bearer Token.\n8. **Zero Fail Isolation**: Every platform branch has `continueOnFail: true`. If one channel fails or API is missing, all others complete unaffected!",
+        "height": 520,
+        "width": 520
+      },
+      "name": "Sticky: Enterprise Setup Guide",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -640,
+        -128
+      ],
+      "id": "4c2a22f2-988b-4b9c-abdb-dbbe5dc9b8a3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 10 * * 2"
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger (Tuesdays 10 AM)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        704
+      ],
+      "id": "1688960c-f05d-480b-b290-1528c64a4f2d"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "trigger-autopost",
+        "options": {}
+      },
+      "name": "Manual Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        896
+      ],
+      "webhookId": "master-autopost-manual",
+      "id": "6a0b4ab0-4d29-41a1-9128-9a953e03a13d"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ContentQueue",
+          "mode": "name"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "status",
+              "lookupValue": "pending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Sheets: Read Pending Queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        800
+      ],
+      "id": "49523ca5-7850-4d8d-a6da-12177d59c61e",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4Ro2UHO4PIKBESyz",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.content_id || $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "name": "IF: Any Posts Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        704,
+        800
+      ],
+      "id": "7476fa08-2722-44d3-81aa-c49e7d7e403d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "name": "Split in Batches (1 by 1)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        928,
+        800
+      ],
+      "id": "675f3288-742c-47bd-9cb5-6a72c816c9a4"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.media_source_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "name": "Download Media to Binary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1152,
+        800
+      ],
+      "id": "d13b3cea-9726-4334-96f7-59d9d758b202",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "name": "={{ $('Split in Batches (1 by 1)').first().json.content_id || 'post_asset_' + Date.now() }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "YOUR_PUBLIC_ASSETS_FOLDER_ID",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "name": "Drive: Upload Asset for Public URL",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1360,
+        800
+      ],
+      "id": "d43b3ee4-1462-4f3b-b3a9-f075ca5e3e13",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "u6OOqrxg0p9ZAYaE",
+          "name": "Google Drive account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare unified payload with binary data AND direct public URL\nconst postItem = $('Split in Batches (1 by 1)').first().json;\nconst driveItem = $input.first()?.json || {};\nconst binaryData = $('Download Media to Binary').first()?.binary;\n\n// Construct direct downloadable / streamable Google Drive public link\n// Fallback to original URL if drive upload skipped\nlet fileId = driveItem.id || driveItem.fileId || '';\nlet publicUrl = fileId \n  ? `https://drive.google.com/uc?export=download&id=${fileId}` \n  : (postItem.media_source_url || '');\n\nconst title = postItem.title || 'New Update';\nconst caption = postItem.caption || postItem.text || '';\nconst hashtags = postItem.hashtags ? `\\n\\n${postItem.hashtags}` : '';\nconst fullText = `${caption}${hashtags}`.trim();\nconst postType = (postItem.post_type || 'all').toLowerCase();\nconst platforms = (postItem.platforms || 'all').toLowerCase();\n\nreturn [{\n  json: {\n    ...postItem,\n    full_text: fullText,\n    public_media_url: publicUrl,\n    google_drive_file_id: fileId,\n    has_binary: !!binaryData,\n    post_type: postType,\n    platforms: platforms,\n    is_video: postType === 'video' || postType === 'short' || postType === 'reel',\n    is_short: postType === 'short',\n    execution_time: new Date().toISOString()\n  },\n  binary: binaryData || {}\n}];"
+      },
+      "name": "Media Prep & Normalizer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1584,
+        800
+      ],
+      "id": "75315975-a77c-4ab4-9b22-d77b43a78b5d"
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.post_type }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "video"
+            },
+            {
+              "value2": "short",
+              "output": 1
+            },
+            {
+              "value2": "image",
+              "output": 2
+            }
+          ]
+        },
+        "fallbackOutput": 3
+      },
+      "name": "Intelligent Type Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        1840,
+        800
+      ],
+      "id": "5bfe2b19-f716-4441-99a6-fe42906f5f89"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $json.title }}",
+        "options": {
+          "description": "={{ $json.full_text }}",
+          "privacyStatus": "public"
+        }
+      },
+      "name": "YouTube: Upload Long Video",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        304
+      ],
+      "id": "0bcc7add-f83f-45f1-a189-cd4d374704e9",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "3eeIB3DxkfBVLPku",
+          "name": "YouTube account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $json.title }} #Shorts",
+        "options": {
+          "description": "={{ $json.full_text }} #Shorts",
+          "privacyStatus": "public"
+        }
+      },
+      "name": "YouTube: Upload Short",
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        496
+      ],
+      "id": "86d85ca9-ee93-44d8-9b79-1e2d0838c898",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "3eeIB3DxkfBVLPku",
+          "name": "YouTube account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/YOUR_IG_BUSINESS_ACCOUNT_ID/media",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "YOUR_META_PAGE_ACCESS_TOKEN"
+            },
+            {
+              "name": "caption",
+              "value": "={{ $json.full_text }}"
+            },
+            {
+              "name": "media_type",
+              "value": "={{ $json.is_video ? 'REELS' : 'IMAGE' }}"
+            },
+            {
+              "name": "={{ $json.is_video ? 'video_url' : 'image_url' }}",
+              "value": "={{ $json.public_media_url }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "name": "Instagram: Create Media Container",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        704
+      ],
+      "id": "66577978-102e-422a-b0b9-c4dc0a98ee15",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "name": "Wait: IG Container Processing",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2432,
+        704
+      ],
+      "id": "8331659a-4b8d-4b49-a052-fa990939fdcb",
+      "webhookId": "568427ca-c7e1-49a8-86da-4a7ad8424098"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/YOUR_IG_BUSINESS_ACCOUNT_ID/media_publish",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "YOUR_META_PAGE_ACCESS_TOKEN"
+            },
+            {
+              "name": "creation_id",
+              "value": "={{ $('Instagram: Create Media Container').first().json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Instagram: Publish Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2640,
+        704
+      ],
+      "id": "903949ef-08d9-4f45-972f-0b7c320ced65",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.facebook.com/v21.0/YOUR_FB_PAGE_ID/{{ $json.is_video ? 'videos' : 'photos' }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "access_token",
+              "value": "YOUR_META_PAGE_ACCESS_TOKEN"
+            },
+            {
+              "name": "={{ $json.is_video ? 'description' : 'caption' }}",
+              "value": "={{ $json.full_text }}"
+            },
+            {
+              "name": "={{ $json.is_video ? 'file_url' : 'url' }}",
+              "value": "={{ $json.public_media_url }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Facebook: Publish Page Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2240,
+        928
+      ],
+      "id": "5ccb2f42-86ec-41c8-b1b0-aae92afe9bbb",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.full_text }}",
+        "additionalFields": {}
+      },
+      "name": "LinkedIn: Share Post",
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        1104
+      ],
+      "id": "1663d672-b78a-4e15-ac3c-135d02384cfc",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://open.tiktokapis.com/v2/post/publish/inbox/video/init/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_TIKTOK_ACCESS_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"source_info\": {\n    \"source\": \"PULL_FROM_URL\",\n    \"video_url\": \"{{ $json.public_media_url }}\"\n  }\n}",
+        "options": {}
+      },
+      "name": "TikTok: Push Video to Inbox",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        1296
+      ],
+      "id": "4319ba22-81f7-4924-8262-6bb1f445969c",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.pinterest.com/v5/pins",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer YOUR_PINTEREST_ACCESS_TOKEN"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"{{ $json.title }}\",\n  \"description\": \"{{ $json.full_text }}\",\n  \"board_id\": \"YOUR_PINTEREST_BOARD_ID\",\n  \"media_source\": {\n    \"source_type\": \"image_url\",\n    \"url\": \"{{ $json.public_media_url }}\"\n  }\n}",
+        "options": {}
+      },
+      "name": "Pinterest: Create Pin",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2208,
+        1504
+      ],
+      "id": "52414ab6-b123-4b23-83e1-9d3513851f0a",
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Master Post Execution Collector & Formatter\nconst post = $('Split in Batches (1 by 1)').first().json;\nconst prep = $('Media Prep & Normalizer').first().json;\n\nfunction evaluatePlatform(nodeName, label) {\n  try {\n    const nodeData = $(nodeName).first();\n    if (!nodeData) return { label, status: 'SKIPPED', id: '', error: 'Not executed or routed away' };\n    if (nodeData.error) return { label, status: 'FAILED', id: '', error: nodeData.error.message || 'API Error' };\n    \n    const json = nodeData.json || {};\n    const id = json.id || json.publish_id || json.urn || json.media_id || json.post_id || 'OK';\n    return { label, status: 'SUCCESS', id: String(id), error: '' };\n  } catch (e) {\n    return { label, status: 'NOT_RUN', id: '', error: e.message };\n  }\n}\n\nconst reports = [\n  evaluatePlatform('YouTube: Upload Long Video', 'YouTube_Long'),\n  evaluatePlatform('YouTube: Upload Short', 'YouTube_Short'),\n  evaluatePlatform('Instagram: Publish Post', 'Instagram'),\n  evaluatePlatform('Facebook: Publish Page Post', 'Facebook'),\n  evaluatePlatform('LinkedIn: Share Post', 'LinkedIn'),\n  evaluatePlatform('TikTok: Push Video to Inbox', 'TikTok'),\n  evaluatePlatform('Pinterest: Create Pin', 'Pinterest'),\n  evaluatePlatform('Twitter/X: Post Tweet', 'Twitter_X')\n];\n\nconst successes = reports.filter(r => r.status === 'SUCCESS').map(r => r.label);\nconst failures = reports.filter(r => r.status === 'FAILED').map(r => `${r.label}: ${r.error}`);\n\nlet overallStatus = 'posted';\nif (failures.length > 0 && successes.length > 0) {\n  overallStatus = 'partial';\n} else if (failures.length > 0 && successes.length === 0) {\n  overallStatus = 'failed';\n}\n\nreturn [{\n  json: {\n    content_id: post.content_id || post.title,\n    title: post.title,\n    overall_status: overallStatus,\n    success_count: successes.length,\n    failure_count: failures.length,\n    success_channels: successes.join(', '),\n    failure_details: failures.join(' | '),\n    public_media_url: prep.public_media_url,\n    processed_at: new Date().toISOString(),\n    reports: reports\n  }\n}];"
+      },
+      "name": "Collect & Audit Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2928,
+        1008
+      ],
+      "id": "14135970-452e-45e5-9b08-8dbdceccc0f3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1SE3b4iAwgu4oSA90DsU1HS0ghAyqwaQFRveyJU4VGho",
+          "mode": "list",
+          "cachedResultName": "su_social_followups",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SE3b4iAwgu4oSA90DsU1HS0ghAyqwaQFRveyJU4VGho/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1512005707,
+          "mode": "list",
+          "cachedResultName": "Untitled",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SE3b4iAwgu4oSA90DsU1HS0ghAyqwaQFRveyJU4VGho/edit#gid=1512005707"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.processed_at }}",
+            "content_id": "={{ $json.content_id }}",
+            "title": "={{ $json.title }}",
+            "overall_status": "={{ $json.overall_status }}",
+            "successful_channels": "={{ $json.success_channels }}",
+            "failure_reasons": "={{ $json.failure_details }}",
+            "public_media_url": "={{ $json.public_media_url }}"
+          }
+        },
+        "options": {}
+      },
+      "name": "Sheets: Log to PostLog",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3152,
+        1008
+      ],
+      "id": "421bb08b-61bf-44d9-a97b-ebe24bdd00f6",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4Ro2UHO4PIKBESyz",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "ContentQueue",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "={{ $('Collect & Audit Results').first().json.overall_status }}"
+          },
+          "matchingColumns": [
+            "content_id"
+          ]
+        },
+        "options": {}
+      },
+      "name": "Sheets: Update Queue Status",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3360,
+        1008
+      ],
+      "id": "f1fd3963-2035-460d-8f1b-44ba78607137",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4Ro2UHO4PIKBESyz",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (Tuesdays 10 AM)": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Read Pending Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Read Pending Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Read Pending Queue": {
+      "main": [
+        [
+          {
+            "node": "IF: Any Posts Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Any Posts Found?": {
+      "main": [
+        [
+          {
+            "node": "Split in Batches (1 by 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split in Batches (1 by 1)": {
+      "main": [
+        [
+          {
+            "node": "Download Media to Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Media to Binary": {
+      "main": [
+        [
+          {
+            "node": "Drive: Upload Asset for Public URL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drive: Upload Asset for Public URL": {
+      "main": [
+        [
+          {
+            "node": "Media Prep & Normalizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Media Prep & Normalizer": {
+      "main": [
+        [
+          {
+            "node": "Intelligent Type Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Intelligent Type Router": {
+      "main": [
+        [
+          {
+            "node": "YouTube: Upload Long Video",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Instagram: Create Media Container",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook: Publish Page Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LinkedIn: Share Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TikTok: Push Video to Inbox",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "YouTube: Upload Short",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Instagram: Create Media Container",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook: Publish Page Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LinkedIn: Share Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TikTok: Push Video to Inbox",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Instagram: Create Media Container",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook: Publish Page Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LinkedIn: Share Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pinterest: Create Pin",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "YouTube: Upload Long Video",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "YouTube: Upload Short",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Instagram: Create Media Container",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Facebook: Publish Page Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "LinkedIn: Share Post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "TikTok: Push Video to Inbox",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Pinterest: Create Pin",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram: Create Media Container": {
+      "main": [
+        [
+          {
+            "node": "Wait: IG Container Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait: IG Container Processing": {
+      "main": [
+        [
+          {
+            "node": "Instagram: Publish Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Instagram: Publish Post": {
+      "main": [
+        [
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube: Upload Long Video": {
+      "main": [
+        [
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube: Upload Short": {
+      "main": [
+        [
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Facebook: Publish Page Post": {
+      "main": [
+        [
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn: Share Post": {
+      "main": [
+        [
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TikTok: Push Video to Inbox": {
+      "main": [
+        [
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinterest: Create Pin": {
+      "main": [
+        [
+          {
+            "node": "Collect & Audit Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect & Audit Results": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Log to PostLog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Log to PostLog": {
+      "main": [
+        [
+          {
+            "node": "Sheets: Update Queue Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheets: Update Queue Status": {
+      "main": [
+        [
+          {
+            "node": "Split in Batches (1 by 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "2a404cf3-482b-4a91-bc0b-810a38c0a96a",
+  "activeVersionId": null,
+  "versionCounter": 13,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-18T04:16:14.528Z",
+      "createdAt": "2026-09-18T04:16:14.528Z",
+      "role": "workflow:owner",
+      "workflowId": "rJ1KnC3eNtmxUlXY",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

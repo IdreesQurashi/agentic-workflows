@@ -1,0 +1,443 @@
+{
+  "updatedAt": "2026-09-20T05:13:07.308Z",
+  "createdAt": "2026-09-20T03:31:12.611Z",
+  "id": "ES4waE4lbLqUXl9N",
+  "name": "Project A1 \u2014 Vehicle Wraps Quote Pipeline",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "vehicle-wrap-quote",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "1ca4b80d-f8d7-407a-9b5b-3e2dd0827c11",
+      "name": "Webhook",
+      "webhookId": "vehicle-wrap-quote",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst body = $input.first().json.body || $input.first().json;\n\n// Honeypot check - bots fill this, humans don't\nconst honeypot = (body.website || \"\").trim();\nif (honeypot) {\n  return [{ json: { result: \"honeypot\", status: \"success\", message: \"Thank you! We received your quote request and will contact you within 24 hours.\" } }];\n}\n\nconst name = (body.name || \"\").trim();\nconst business = (body.business || \"\").trim();\nconst phoneRaw = (body.phone || \"\").trim();\nconst vehicleType = (body.vehicleType || \"\").trim();\nconst message = (body.message || \"\").trim();\nconst submissionId = (body.submissionId || \"\").trim();\nconst sourcePage = (body.sourcePage || \"\").trim();\n\nconst errors = [];\n\nif (!name || name.length < 2) {\n  errors.push({ field: \"name\", message: \"Name must be at least 2 characters.\" });\n} else if (name.length > 100) {\n  errors.push({ field: \"name\", message: \"Name must be under 100 characters.\" });\n}\n\nconst phoneAllowed = /^[0-9+\\s\\-().]+$/;\nconst phoneDigits = phoneRaw.replace(/\\D/g, \"\");\n\nif (!phoneRaw) {\n  errors.push({ field: \"phone\", message: \"A valid phone or WhatsApp number is required.\" });\n} else if (!phoneAllowed.test(phoneRaw)) {\n  errors.push({ field: \"phone\", message: \"Phone number contains invalid characters. Use digits, +, spaces, and dashes only.\" });\n} else if (phoneDigits.length < 7) {\n  errors.push({ field: \"phone\", message: \"A valid phone number with at least 7 digits is required.\" });\n} else if (phoneDigits.length > 15) {\n  errors.push({ field: \"phone\", message: \"Phone number is too long (max 15 digits).\" });\n}\n\nconst allowedVehicles = [\"Car\", \"Truck\", \"Van\", \"SUV\", \"Fleet (Multiple Vehicles)\", \"Other\"];\nif (!vehicleType || !allowedVehicles.includes(vehicleType)) {\n  errors.push({ field: \"vehicleType\", message: \"Please select a valid vehicle type from the list.\" });\n}\n\nif (business.length > 100) {\n  errors.push({ field: \"business\", message: \"Business name must be under 100 characters.\" });\n}\n\nif (message.length > 500) {\n  errors.push({ field: \"message\", message: \"Message must be under 500 characters.\" });\n}\n\nif (errors.length > 0) {\n  return [{ json: { result: \"invalid\", status: \"error\", field: errors[0].field, message: errors[0].message } }];\n}\n\n// Formula injection protection\nconst sanitize = (val) => {\n  if (val && /^[=+\\-@]/.test(val)) return \"'\" + val;\n  return val;\n};\n\nreturn [{ json: {\n  result: \"valid\",\n  submission_id: submissionId || (\"sub_\" + Date.now() + \"_\" + Math.random().toString(36).substring(2, 8)),\n  submitted_at: new Date().toISOString(),\n  name: sanitize(name),\n  business: sanitize(business),\n  phone: phoneRaw,\n  vehicle_type: vehicleType,\n  message: sanitize(message),\n  source_page: sourcePage,\n  status: \"NEW\"\n} }];\n"
+      },
+      "id": "78177086-d6e1-409d-a25a-778819af6572",
+      "name": "Validate + Sanitize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.result }}",
+              "rightValue": "valid",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b4a7b7ad-080d-4fdb-9b4b-c950d9dfe33f",
+      "name": "IF: Is Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.result }}",
+              "rightValue": "invalid",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "25ebdcad-dc51-4a60-8b53-e7eaf3f94eae",
+      "name": "IF: Is Invalid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: \"error\", field: $json.field, message: $json.message }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "a6549a02-1324-48e4-bc2e-02b91b546ff2",
+      "name": "Respond: Validation Error (400)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ status: \"success\", message: $json.message }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "9491e630-fb92-43cf-aba9-f43fff0c4c6a",
+      "name": "Respond: Honeypot Fake Success (200)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1dQgwRKS1H4tbCnFP5mosaAPGZFPACpffFdUj0pTFtHg",
+          "mode": "list",
+          "cachedResultName": "Submissions",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dQgwRKS1H4tbCnFP5mosaAPGZFPACpffFdUj0pTFtHg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1dQgwRKS1H4tbCnFP5mosaAPGZFPACpffFdUj0pTFtHg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "submission_id",
+              "displayName": "submission_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submitted_at",
+              "displayName": "submitted_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "business",
+              "displayName": "business",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "vehicle_type",
+              "displayName": "vehicle_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "soure_page",
+              "displayName": "soure_page",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "61c08191-6984-4f43-a481-99987c422af0",
+      "name": "Google Sheets: Append Row",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        368,
+        224
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4Ro2UHO4PIKBESyz",
+          "name": "Google Sheets account 2"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"status\":\"success\",\"message\":\"Thank you! We received your quote request and will contact you within 24 hours.\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "6f1242cd-1bbe-41d1-b2fb-3eb56538ac16",
+      "name": "Respond: Success (200)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        672,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst errorInfo = $input.first().json;\nlet lead = {};\ntry {\n  lead = $('Validate + Sanitize').first().json;\n} catch(e) {}\n\nconst logEntry = {\n  logged_at: new Date().toISOString(),\n  lead_payload: lead,\n  error: errorInfo,\n  recovery_status: \"PENDING\"\n};\n\nconsole.error(\"SHEET_WRITE_FAILURE:\", JSON.stringify(logEntry));\n\nreturn [{ json: { logged: true, logEntry } }];\n"
+      },
+      "id": "094c8108-ceef-4149-8901-495e87676d1a",
+      "name": "Log Error Fallback",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        304
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\"status\":\"success\",\"message\":\"Your request has been received. We will be in touch shortly.\"}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "c87f6906-ba9b-43db-ad98-f5febe04eabd",
+      "name": "Respond: Graceful Failure (200)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        304
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate + Sanitize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate + Sanitize": {
+      "main": [
+        [
+          {
+            "node": "IF: Is Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Is Valid?": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Append Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF: Is Invalid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: Is Invalid?": {
+      "main": [
+        [
+          {
+            "node": "Respond: Validation Error (400)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond: Honeypot Fake Success (200)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Append Row": {
+      "main": [
+        [
+          {
+            "node": "Respond: Success (200)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Error Fallback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Error Fallback": {
+      "main": [
+        [
+          {
+            "node": "Respond: Graceful Failure (200)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "0392c4a9-5cfd-43dd-b2cc-ea1e7cf1f3d9",
+  "activeVersionId": "ed627e56-2e77-46c4-8094-f8a2541eec41",
+  "versionCounter": 42,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-20T03:31:12.613Z",
+      "createdAt": "2026-09-20T03:31:12.613Z",
+      "role": "workflow:owner",
+      "workflowId": "ES4waE4lbLqUXl9N",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

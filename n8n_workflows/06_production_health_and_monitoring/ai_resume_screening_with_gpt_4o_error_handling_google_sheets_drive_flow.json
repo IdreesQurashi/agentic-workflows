@@ -1,0 +1,787 @@
+{
+  "updatedAt": "2026-09-19T14:37:51.044Z",
+  "createdAt": "2026-09-19T14:37:51.044Z",
+  "id": "CpbcR0FPnFCwFKyd",
+  "name": "[Document] AI resume screening with GPT-4o & error handling | Google Sheets & Drive flow",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "548b4ba3-85c0-4e01-a89d-53c345910b22",
+      "name": "Setup Guide",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4752,
+        -160
+      ],
+      "parameters": {
+        "content": ""
+      }
+    },
+    {
+      "id": "c84f6d81-dec5-458d-b298-617752318f87",
+      "name": "Monitor Resumes",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3952,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "ddd0aa5e-dd9c-4658-9ccb-eb183bd75062",
+      "name": "Email Monitoring",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4080,
+        320
+      ],
+      "parameters": {
+        "content": ""
+      }
+    },
+    {
+      "id": "e0a4d380-edc6-48c0-b655-f7ffc2d11603",
+      "name": "Save to Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3728,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "37bb352f-14f9-4286-9a0b-9b3e3680f733",
+      "name": "Upload Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -3504,
+        560
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "6ee6f742-ce91-4bdc-a3ea-769a06cf2512",
+      "name": "Route by File Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -3280,
+        352
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "899b217d-9258-4fd6-be41-fdd5fe52c5d3",
+      "name": "Extract PDF Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -2864,
+        128
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "3f93e040-46e2-4c71-b0b2-548bcfe04235",
+      "name": "Convert DOCX to Docs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3056,
+        368
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "64cf332a-2691-4181-a244-4cc18f9a1b13",
+      "name": "Get Doc as Text",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -2832,
+        368
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "6b5e1a57-2c26-4bbe-b104-99ef776f867c",
+      "name": "Download TXT",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3056,
+        576
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "2255b19e-1842-4e23-9fcf-0c69b036226b",
+      "name": "Extract TXT Content",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -2832,
+        576
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "ee8c0749-6302-420d-9fff-cb57dfef3b9e",
+      "name": "Text Extracted?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2544,
+        288
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "cd20f833-a887-46c4-9702-94e53780552d",
+      "name": "Standardize Resume Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2320,
+        192
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "87bae272-a305-4573-b651-8a0428d13fce",
+      "name": "Resume Quality Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -2096,
+        192
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "0a211848-c56f-4602-a8f5-e0a63e9c0631",
+      "name": "Job Description",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1872,
+        80
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "53dbdfb5-0e9e-4e03-81d3-ed01714978ba",
+      "name": "AI Recruiter Analysis",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -1648,
+        80
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "416be5d3-78da-4837-b312-5edd184216b5",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1504,
+        304
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "ea66c7e3-1572-4824-8eae-a5b637e5df33",
+      "name": "GPT-4o Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1632,
+        304
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "101a971e-3fae-445e-96ac-878650a6d14a",
+      "name": "AI Analysis Success?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1296,
+        80
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "df2d7bc1-4628-4a08-8a55-6de9111eea4c",
+      "name": "Extract Candidate Info",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        -1136,
+        -160
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "e5ac2a2d-bbdd-4582-b019-d8ba5ba6c57c",
+      "name": "Final Data Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -784,
+        -160
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "168334bc-97c8-490b-a1fc-0acb8066912d",
+      "name": "Log Successful Processing",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -736,
+        -336
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "95d4e4e5-63bd-4a2b-bc26-ea15144d76af",
+      "name": "Set Upload Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        752
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "56635bec-8887-4b1d-90fd-a4cf35484f57",
+      "name": "Set Extraction Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        528
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "825c2125-1914-4e4b-9d6e-b67a2e3b11ce",
+      "name": "Set Quality Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        336
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "57f8e9fb-3175-4975-9775-e134e94eb6e4",
+      "name": "Set AI Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        112
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "f7b1385e-6a0a-470c-93cd-55ba1da56ee4",
+      "name": "Set Validation Error",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -560,
+        -80
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "3b4b6746-99e0-4d6b-a620-fc8c89974eee",
+      "name": "Merge All Errors",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -336,
+        352
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "5c692947-9802-43d7-848a-61d9fa01f02a",
+      "name": "Send Error Notification",
+      "webhookId": "8b233cc7-a903-4afe-9179-14923fcad8a7",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -112,
+        352
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "803eb0cb-f941-44cb-89dc-3813ec26d3c9",
+      "name": "Log Error to Sheet",
+      "disabled": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        112,
+        352
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "52ea629f-2f47-4b03-9498-98701026de61",
+      "name": "File Processing",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -3104,
+        -464
+      ],
+      "parameters": {
+        "content": ""
+      }
+    },
+    {
+      "id": "82d07dc3-aac4-4d04-94ce-89555c5c5abd",
+      "name": "Error Handling",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        -480
+      ],
+      "parameters": {
+        "content": ""
+      }
+    },
+    {
+      "id": "e14473a9-91b4-43b7-8279-de2e3a47711f",
+      "name": "AI Analysis Engine",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1648,
+        -512
+      ],
+      "parameters": {
+        "content": ""
+      }
+    },
+    {
+      "id": "087335ab-ae10-46c5-8608-eafa51d47ed7",
+      "name": "Get Doc",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3088,
+        128
+      ],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "Get Doc": {
+      "main": [
+        [
+          {
+            "node": "Extract PDF Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download TXT": {
+      "main": [
+        [
+          {
+            "node": "Extract TXT Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GPT-4o Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Recruiter Analysis",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Extract Candidate Info",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set AI Error": {
+      "main": [
+        [
+          {
+            "node": "Merge All Errors",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Save to Drive": {
+      "main": [
+        [
+          {
+            "node": "Upload Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Doc as Text": {
+      "main": [
+        [
+          {
+            "node": "Text Extracted?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job Description": {
+      "main": [
+        [
+          {
+            "node": "AI Recruiter Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monitor Resumes": {
+      "main": [
+        [
+          {
+            "node": "Save to Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Extracted?": {
+      "main": [
+        [
+          {
+            "node": "Standardize Resume Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Extraction Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Success?": {
+      "main": [
+        [
+          {
+            "node": "Route by File Type",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Upload Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF Text": {
+      "main": [
+        [
+          {
+            "node": "Text Extracted?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge All Errors": {
+      "main": [
+        [
+          {
+            "node": "Send Error Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Upload Error": {
+      "main": [
+        [
+          {
+            "node": "Merge All Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Data Valid?": {
+      "main": [
+        [
+          {
+            "node": "Log Successful Processing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Validation Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Quality Error": {
+      "main": [
+        [
+          {
+            "node": "Merge All Errors",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Route by File Type": {
+      "main": [
+        [
+          {
+            "node": "Get Doc",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convert DOCX to Docs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download TXT",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract TXT Content": {
+      "main": [
+        [
+          {
+            "node": "Text Extracted?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Analysis Success?": {
+      "main": [
+        [
+          {
+            "node": "Extract Candidate Info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set AI Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert DOCX to Docs": {
+      "main": [
+        [
+          {
+            "node": "Get Doc as Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume Quality Check": {
+      "main": [
+        [
+          {
+            "node": "Job Description",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Quality Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Extraction Error": {
+      "main": [
+        [
+          {
+            "node": "Merge All Errors",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set Validation Error": {
+      "main": [
+        [
+          {
+            "node": "Merge All Errors",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "AI Recruiter Analysis": {
+      "main": [
+        [
+          {
+            "node": "AI Analysis Success?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Candidate Info": {
+      "main": [
+        [
+          {
+            "node": "Final Data Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Error Notification": {
+      "main": [
+        [
+          {
+            "node": "Log Error to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Standardize Resume Data": {
+      "main": [
+        [
+          {
+            "node": "Resume Quality Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Recruiter Analysis",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "722b20ec-74db-4c2a-9cef-27b05729ca6d",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-19T14:37:51.045Z",
+      "createdAt": "2026-09-19T14:37:51.045Z",
+      "role": "workflow:owner",
+      "workflowId": "CpbcR0FPnFCwFKyd",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

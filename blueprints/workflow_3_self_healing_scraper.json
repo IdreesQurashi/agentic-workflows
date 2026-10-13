@@ -1,0 +1,129 @@
+{
+  "blueprint_id": "workflow_3_self_healing_scraper",
+  "name": "Self Healing Web Scraper and Autonomous Browser Agent",
+  "version": "1.0.0",
+  "category": "Autonomous Browser Automation and Web Data Extraction",
+  "framework_pattern": "Deterministic First Playwright Controller with Vision LLM Fallback and Self Healing Locator Cache",
+  "author": "Antigravity Agentic Workflows Vault (Cole Medin Pattern)",
+  "created_at": "2026-09-07T03:55:00+05:00",
+  "description": "High performance async Playwright scraper with stealth anti bot evasions, deterministic fast path cache execution, micro timeout error interceptor, Gemini Flash multimodal spatial grounding, and persistent ARIA selector cache updater.",
+  "architecture": {
+    "pillar_1_controller": {
+      "name": "Browser Controller",
+      "engine": "Playwright Async",
+      "features": [
+        "Isolated browser contexts and custom user agents",
+        "Stealth anti bot fingerprint masking",
+        "Deterministic fast path selector queries with micro timeouts",
+        "Zero token overhead during standard operational runs"
+      ]
+    },
+    "pillar_2_watchdog": {
+      "name": "Error Interceptor",
+      "timeout_threshold_ms": 2500,
+      "features": [
+        "Traps PlaywrightTimeoutError and DOM element resolution failures",
+        "Prevents pipeline termination and freezes active page context",
+        "Captures lossless PNG viewport screenshots for multimodal inspection",
+        "Routes failure diagnostics directly to Vision Fallback Node"
+      ]
+    },
+    "pillar_3_vision": {
+      "name": "Vision LLM Fallback Node",
+      "provider": "Google Gemini",
+      "model": "gemini-2.5-flash",
+      "fallback_model": "gemini-1.5-flash",
+      "features": [
+        "Lossless image inspection with zero raw DOM parsing overhead",
+        "Spatial bounding box grounding scaled 0 to 1000",
+        "Extraction of visible text and ARIA accessibility semantics",
+        "Strict Pydantic schema validation for structured JSON resolution"
+      ]
+    },
+    "pillar_4_cache": {
+      "name": "Dynamic ARIA Selector Cache Ledger",
+      "persistence_format": "JSON",
+      "default_file": "selector_cache.json",
+      "features": [
+        "Domain and field key hierarchical indexing",
+        "Prioritization of accessibility roles and visible text over brittle classes",
+        "Success and failure hit rate telemetry tracking",
+        "Sub second deterministic execution on all subsequent runs"
+      ]
+    }
+  },
+  "runtime_requirements": {
+    "python_version": ">=3.10",
+    "dependencies": [
+      "playwright>=1.40.0",
+      "pydantic>=2.5.0",
+      "google-genai>=2.0.0"
+    ],
+    "optional_dependencies": [
+      "google-generativeai>=0.8.0"
+    ]
+  },
+  "browser_config": {
+    "engine": "chromium",
+    "headless": true,
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+    "stealth_evasions": {
+      "evade_navigator_webdriver": true,
+      "mock_chrome_runtime": true,
+      "mock_plugins_and_languages": true,
+      "spoof_webgl_vendor_renderer": true
+    },
+    "timeouts": {
+      "fast_path_timeout_ms": 2500,
+      "navigation_timeout_ms": 30000,
+      "healed_verification_timeout_ms": 3000
+    }
+  },
+  "vision_config": {
+    "model": "gemini-2.5-flash",
+    "temperature": 0.1,
+    "max_tokens": 1024,
+    "coordinate_scale": 1000,
+    "selector_priorities": [
+      "aria_role_with_accessible_name",
+      "visible_text_anchor",
+      "text_normalized_semantic_xpath",
+      "spatial_viewport_coordinates"
+    ],
+    "forbidden_patterns": [
+      "dynamic_tailwind_hashes",
+      "css_obfuscated_identifiers",
+      "transient_component_ids"
+    ]
+  },
+  "environment_variables": {
+    "GEMINI_API_KEY": {
+      "required": false,
+      "description": "Google Gemini API key for multimodal spatial grounding. If absent, engine engages heuristic fallback."
+    },
+    "GOOGLE_API_KEY": {
+      "required": false,
+      "description": "Alternative environment variable for Gemini API key."
+    },
+    "PLAYWRIGHT_HEADLESS": {
+      "required": false,
+      "default": "true",
+      "description": "Set to false to display Chromium GUI window during development."
+    },
+    "SELECTOR_CACHE_FILE": {
+      "required": false,
+      "default": "selector_cache.json",
+      "description": "Custom file path for persistent selector cache ledger."
+    }
+  },
+  "files": [
+    "README.md",
+    "agent.py",
+    "vision_healer.py",
+    "blueprint.json"
+  ]
+}

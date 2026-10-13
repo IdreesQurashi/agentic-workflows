@@ -1,0 +1,188 @@
+{
+  "updatedAt": "2026-09-19T14:35:07.000Z",
+  "createdAt": "2026-09-17T23:18:07.911Z",
+  "id": "ln1tJ7b2aghOFUIS",
+  "name": "My workflow 9",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bf600814-fc1c-4aaa-99ed-2cb1fd36243c",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "AI video",
+        "regionCode": "PK",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "9d5ad5c2-3c25-464a-a0e3-051bb6d0ab8c",
+      "name": "Upload a video",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "3eeIB3DxkfBVLPku",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.linkedIn",
+      "typeVersion": 1,
+      "position": [
+        512,
+        0
+      ],
+      "id": "c41bc476-09e4-4ac6-89bd-83cb6ea36db6",
+      "name": "Create a post"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -592,
+        -160
+      ],
+      "id": "e8f067e1-eb8c-4c30-8059-ba619d8018e2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.twitter",
+      "typeVersion": 2,
+      "position": [
+        -368,
+        -160
+      ],
+      "id": "96badf49-d817-4932-944d-0d17b6fde9b2",
+      "name": "Create Tweet"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api-sandbox.pinterest.com/v5/boards",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -144,
+        -160
+      ],
+      "id": "6801b46c-0a1c-4bc4-9f1a-b02de0b708b9",
+      "name": "HTTP Request1"
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Upload a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload a video": {
+      "main": [
+        [
+          {
+            "node": "Create a post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Create Tweet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tweet": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "6e53e48f-9817-4a8b-b4d6-ad02b2ae3bef",
+  "activeVersionId": null,
+  "versionCounter": 21,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-17T23:18:07.921Z",
+      "createdAt": "2026-09-17T23:18:07.921Z",
+      "role": "workflow:owner",
+      "workflowId": "ln1tJ7b2aghOFUIS",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

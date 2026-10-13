@@ -1,0 +1,519 @@
+{
+  "updatedAt": "2026-09-19T14:34:11.000Z",
+  "createdAt": "2026-09-14T17:35:18.958Z",
+  "id": "WmlBPU2sv2t9kkT5",
+  "name": "My workflow 5",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "instagram-dm",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c7650953-07ae-4d05-a5de-ddecb8472f36",
+      "name": "Webhook",
+      "webhookId": "instagram-dm-webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -448,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.query['hub.challenge'] }}",
+        "options": {}
+      },
+      "id": "a49f2398-ec5a-428f-9ba7-5240bd3d3119",
+      "name": "Respond to Webhook (Verification)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.body.entry[0].messaging[0].message.is_echo }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "f4ff48c9-2894-423e-8f48-6c2ea888e152",
+      "name": "Check is_echo",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -224,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.body.entry[0].messaging[0].message.attachments[0].type }}",
+        "rules": {
+          "rules": [
+            {
+              "value2": "image"
+            },
+            {
+              "value2": "audio"
+            }
+          ]
+        },
+        "fallbackOutput": 2
+      },
+      "id": "4fb1afc8-b0e8-4a80-9aea-904c0bf622fd",
+      "name": "Switch on Attachment Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        16,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": "={{ $json.body.entry[0].messaging[0].message.text }}",
+        "systemMessage": "You are a helpful assistant named vision. Keep your answer short and to the point. Today's date is {{ $now }}.",
+        "model": "gemini-1.5-pro-latest"
+      },
+      "id": "6932937b-a45c-4afc-951d-f8c2ae6a7a74",
+      "name": "AI Agent (Text)",
+      "type": "n8n-nodes-base.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        304,
+        512
+      ],
+      "credentials": {
+        "googleGeminiApi": {
+          "id": "googleGeminiApi",
+          "name": "Google Gemini API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b4bd9e75-4e87-4907-a7e0-f64c86ea2aa3",
+      "name": "Set Variable (Text/Image)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.2,
+      "position": [
+        704,
+        432
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/me/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\": {\n    \"id\": \"{{ $json.recipient_id }}\"\n  },\n  \"message\": {\n    \"text\": \"{{ $json.text_message.replace(/\\n/g, ' ') }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "55c52afc-c14f-407f-84cc-6511cc0b807c",
+      "name": "Send Message via Meta API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        704,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.entry[0].messaging[0].message.attachments[0].payload.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "8989a14e-f86e-4043-b49c-54d6f4952105",
+      "name": "Download Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        304,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": "Tell me what you see in this image in a conversational way.",
+        "model": "gemini-1.5-pro-latest",
+        "options": {
+          "binaryData": true,
+          "binaryPropertyName": "data"
+        }
+      },
+      "id": "51c99052-5b52-4b7a-ac1b-761e2e9eb87d",
+      "name": "Google Gemini (Vision)",
+      "type": "n8n-nodes-base.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        480,
+        128
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vvxfmXZ3AVztd90O",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.entry[0].messaging[0].message.attachments[0].payload.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "1dbb07a5-4a54-4597-90dd-1396785e1705",
+      "name": "Download Audio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        304,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "command": "whisper /tmp/n8n_audio_in.ogg --model medium --output_dir /tmp/",
+        "executeOnce": false
+      },
+      "id": "a002aea9-f1c5-46f8-a7e1-4b1bf764e6f7",
+      "name": "Local Whisper (Transcribe)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        480,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "prompt": "={{ $json.stdout }}",
+        "systemMessage": "You are a helpful assistant named vision. Reply to this transcribed message naturally and keep it short.",
+        "model": "gemini-1.5-pro-latest"
+      },
+      "id": "9abc9183-b1bf-4bc3-98b3-87773d4baada",
+      "name": "Google Gemini (Audio Reply)",
+      "type": "n8n-nodes-base.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        896,
+        336
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vvxfmXZ3AVztd90O",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "command": "edge-tts --voice en-US-AriaNeural --text \"{{ $json.message }}\" --write-media /tmp/n8n_audio_out.mp3",
+        "executeOnce": false
+      },
+      "id": "23417fde-30ac-4524-8598-e81687802539",
+      "name": "Local Edge-TTS (Generate)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "items[0].binary.data.mimeType = 'audio/mpeg';\nreturn items;"
+      },
+      "id": "2c9de515-35cf-4ac7-899a-f9229f03be7e",
+      "name": "Change Mime Type",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "name": "audio_reply.mp3",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "id": "259efeac-0dab-4b61-a86c-0e0d97d5f276",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1536,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v19.0/me/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\": {\n    \"id\": \"{{ $('Webhook').item.json.body.entry[0].messaging[0].sender.id }}\"\n  },\n  \"message\": {\n    \"attachment\": {\n      \"type\": \"audio\",\n      \"payload\": {\n        \"url\": \"{{ $json.webContentLink }}\"\n      }\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "a2d4f7da-7aac-4793-97a1-d85a648e5ae5",
+      "name": "Send Audio via Meta API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1712,
+        336
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook (Verification)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Check is_echo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check is_echo": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch on Attachment Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch on Attachment Type": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent (Text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Google Gemini (Vision)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent (Text)": {
+      "main": [
+        [
+          {
+            "node": "Set Variable (Text/Image)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Variable (Text/Image)": {
+      "main": [
+        [
+          {
+            "node": "Send Message via Meta API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Audio": {
+      "main": [
+        [
+          {
+            "node": "Local Whisper (Transcribe)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Change Mime Type": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Send Audio via Meta API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini (Vision)": {
+      "main": [
+        [
+          {
+            "node": "Set Variable (Text/Image)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local Whisper (Transcribe)": {
+      "main": [
+        [
+          {
+            "node": "Google Gemini (Audio Reply)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini (Audio Reply)": {
+      "main": [
+        [
+          {
+            "node": "Local Edge-TTS (Generate)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local Edge-TTS (Generate)": {
+      "main": [
+        [
+          {
+            "node": "Change Mime Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "33729d6e-cf49-41a0-8e58-3a169ccc5ae8",
+  "activeVersionId": null,
+  "versionCounter": 9,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-14T17:35:19.014Z",
+      "createdAt": "2026-09-14T17:35:19.014Z",
+      "role": "workflow:owner",
+      "workflowId": "WmlBPU2sv2t9kkT5",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

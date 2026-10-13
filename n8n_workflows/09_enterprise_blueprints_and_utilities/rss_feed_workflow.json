@@ -1,0 +1,462 @@
+{
+  "updatedAt": "2026-09-19T14:32:45.726Z",
+  "createdAt": "2026-09-12T02:47:39.176Z",
+  "id": "KWZuwymO5RsZfDyc",
+  "name": "RSS Feed workflow",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "68841c9c-947b-432d-9289-39dc2e503585",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "options": {}
+      },
+      "id": "25a3f4e3-1e23-49ce-97fb-f02e4157fd06",
+      "name": "RSS TechCrunch",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://openai.com/blog/rss.xml",
+        "options": {}
+      },
+      "id": "207010ed-833a-4666-baf8-7381841bdc4a",
+      "name": "RSS OpenAI",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -48
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://blog.google/technology/ai/rss/",
+        "options": {}
+      },
+      "id": "f6572319-1399-4b84-9644-e6d485e96d40",
+      "name": "RSS Google AI",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.anthropic.com/feed.xml",
+        "options": {}
+      },
+      "id": "ab18b3e6-ff91-4265-9216-518869a7c497",
+      "name": "RSS Anthropic",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        256
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "74dfd806-c210-45f0-8f82-a558a89b9ea6",
+      "name": "Merge Feeds",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let items = $input.all();\nlet now = new Date();\nlet filtered = [];\nlet seen = new Set();\n\nfor(let item of items) {\n  let pubDate = new Date(item.json.isoDate || item.json.pubDate || now);\n  let hoursOld = (now - pubDate) / (1000 * 60 * 60);\n  \n  if (hoursOld <= 48 && !seen.has(item.json.title)) {\n    seen.add(item.json.title);\n    filtered.push({\n      json: {\n        title: item.json.title,\n        link: item.json.link,\n        text: item.json.contentSnippet || item.json.content || item.json.title\n      }\n    });\n  }\n}\nreturn filtered;"
+      },
+      "id": "a7613f9d-ddb0-4a75-bfbc-e1f5300dc1df",
+      "name": "Normalize & Filter 48h",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let items = $input.all();\n\n// Parse OpenAI JSON output\nitems.forEach(item => {\n  try {\n    let aiData = JSON.parse(item.json.message.content);\n    item.json.summary = aiData.summary;\n    item.json.importance = aiData.importance;\n  } catch(e) {\n    item.json.summary = 'No summary';\n    item.json.importance = 0;\n  }\n});\n\n// Sort by importance DESC\nitems.sort((a, b) => b.json.importance - a.json.importance);\n\n// Top 5\nlet top5 = items.slice(0, 5);\n\n// Format Email HTML\nlet html = '<h2>\ud83d\udd25 AI Daily Intelligence Digest</h2><br>';\ntop5.forEach((item, i) => {\n  html += `<h3>${i+1}. <a href=\"${item.json.link}\">${item.json.title}</a> (Score: ${item.json.importance}/10)</h3><p>${item.json.summary}</p><br><hr>`;\n});\n\n// Return single item for Gmail to avoid looping\nreturn [{ json: { emailHtml: html, articleCount: top5.length } }];"
+      },
+      "id": "6424e165-6878-4563-8011-acbd00e9a948",
+      "name": "Rank Top 5 & Format HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1yR8T4XRpxM1O_mYHyiXJ7T8pp-uzLf9BM_1lKOg3PCk",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1yR8T4XRpxM1O_mYHyiXJ7T8pp-uzLf9BM_1lKOg3PCk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "news",
+              "displayName": "news",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "new 2",
+              "displayName": "new 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "news 3",
+              "displayName": "news 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "338e09ad-fa42-4f37-bdc0-d6d1fbdbc0b0",
+      "name": "Save to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        816,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DlW6CGRkA6cPkjYs",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "idreesqurashi.ai",
+        "subject": "\ud83d\udd25 AI Daily Intelligence Digest",
+        "emailType": "text",
+        "message": "={{ $json.emailHtml }}",
+        "options": {}
+      },
+      "id": "fbc3460d-5d9a-4005-8fc0-d458f1a4756d",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1008,
+        0
+      ],
+      "webhookId": "3aa5686e-108d-415e-adbf-51f314181251",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cmK3BbZGxXjQkleW",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "87acc29a-cab4-4194-bd7d-d83b531c727b",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        448
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "console.log('Workflow Failed:', $json.error);\nreturn [{ json: { status: 'failed', error: $json.error.message, node: $json.execution.lastNodeExecuted } }];"
+      },
+      "id": "db6bbe87-fe8b-4038-a555-8b11e319d030",
+      "name": "Log Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.1-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.1-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You're a intellegent helpful, RSS feed summary generater",
+              "role": "model"
+            },
+            {
+              "content": "your task is to take a bunch of Rss feed titles, links and their content as input mentioned in next message, and generate an output of a summary of those rss feeds posts.\nStrict rules :\nEvery summary must be between 1 to 3 lines\nMust genreate a summary that is having the full content in short understandable words.\nOnly provide the summaries seprately as output response, any other trash fluff must not be used"
+            },
+            {
+              "content": "=Input data:\n{{ $json.title }}\n{{ $json.content }}\n{{ $json.link }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        272,
+        16
+      ],
+      "id": "fd95d2d7-234c-48d1-b343-3bd049d6c419",
+      "name": "Generatign the summary",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vvxfmXZ3AVztd90O",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS TechCrunch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS OpenAI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Google AI",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Anthropic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS TechCrunch": {
+      "main": [
+        [
+          {
+            "node": "Merge Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Merge Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Google AI": {
+      "main": [
+        [
+          {
+            "node": "Merge Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Anthropic": {
+      "main": [
+        [
+          {
+            "node": "Merge Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Feeds": {
+      "main": [
+        [
+          {
+            "node": "Normalize & Filter 48h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize & Filter 48h": {
+      "main": [
+        [
+          {
+            "node": "Generatign the summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rank Top 5 & Format HTML": {
+      "main": [
+        [
+          {
+            "node": "Save to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Log Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generatign the summary": {
+      "main": [
+        [
+          {
+            "node": "Rank Top 5 & Format HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "2a78e55f-25fc-42c1-a0c7-2cf53c4d7bb1",
+  "activeVersionId": null,
+  "versionCounter": 26,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-12T02:47:39.179Z",
+      "createdAt": "2026-09-12T02:47:39.179Z",
+      "role": "workflow:owner",
+      "workflowId": "KWZuwymO5RsZfDyc",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

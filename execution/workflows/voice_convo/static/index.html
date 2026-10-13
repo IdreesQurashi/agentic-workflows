@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enki Voice AI — Real-time Conversational Terminal</title>
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --card: #12161f;
+      --border: #222938;
+      --accent: #00e5ff;
+      --accent-glow: rgba(0, 229, 255, 0.35);
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --user-bubble: #1f293d;
+      --ai-bubble: #102235;
+      --danger: #ff4757;
+      --success: #2ed573;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Layout */
+    .container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Sidebar / Telemetry */
+    .sidebar {
+      width: 320px;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--accent);
+    }
+
+    .badge {
+      font-size: 11px;
+      background: rgba(0, 229, 255, 0.15);
+      color: var(--accent);
+      padding: 3px 8px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+    }
+
+    .telemetry-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .telemetry-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .telemetry-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .telemetry-val {
+      color: var(--accent);
+      font-family: monospace;
+    }
+
+    /* Main Chat & Visualizer Area */
+    .main-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Header */
+    .top-bar {
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    /* Transcript Stream */
+    .transcript-stream {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: 12px;
+      line-height: 1.5;
+      font-size: 15px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: var(--user-bubble);
+      border: 1px solid #2f3e5c;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: var(--ai-bubble);
+      border: 1px solid #183e61;
+      color: #e3f2fd;
+    }
+
+    .message-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Voice Control Dock */
+    .control-dock {
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Animated Visualizer Orb */
+    .orb-container {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orb {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent) 0%, #007799 100%);
+      box-shadow: 0 0 20px var(--accent-glow);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .orb:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 35px var(--accent);
+    }
+
+    .orb.listening {
+      background: radial-gradient(circle, #ff4757 0%, #a01422 100%);
+      box-shadow: 0 0 35px rgba(255, 71, 87, 0.7);
+      animation: pulse 1.2s infinite alternate;
+    }
+
+    .orb.thinking {
+      background: radial-gradient(circle, #ffa502 0%, #a36500 100%);
+      box-shadow: 0 0 35px rgba(255, 165, 2, 0.7);
+      animation: spin 1.5s linear infinite;
+    }
+
+    .orb.speaking {
+      background: radial-gradient(circle, #2ed573 0%, #157339 100%);
+      box-shadow: 0 0 35px rgba(46, 213, 115, 0.7);
+      animation: pulse 0.7s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.96); box-shadow: 0 0 15px currentColor; }
+      100% { transform: scale(1.1); box-shadow: 0 0 40px currentColor; }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .orb svg {
+      width: 32px;
+      height: 32px;
+      fill: #ffffff;
+    }
+
+    .status-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .input-row {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      gap: 10px;
+    }
+
+    .text-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .text-input:focus {
+      border-color: var(--accent);
+    }
+
+    .send-btn {
+      background: var(--accent);
+      color: #000000;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      padding: 0 20px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .send-btn:hover {
+      background: #33ecff;
+    }
+
+    .voice-options {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .voice-options label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar: Real-time Telemetry -->
+    <div class="sidebar">
+      <div class="brand">
+        <span>ENKI</span>
+        <span class="badge">VOICE v2.0</span>
+      </div>
+
+      <div class="telemetry-card">
+        <div class="telemetry-title">System Status</div>
+        <div class="telemetry-item">
+          <span>Engine</span>
+          <span class="telemetry-val">FastAPI + Edge-TTS</span>
+        </div>
+        <div class="telemetry-item">
+          <span>STT Core</span>
+          <span class="telemetry-val">OpenAI Whisper</span>
+        </div>
+        <div class="telemetry-item">
+          <span>LLM Brain</span>
+          <span class="telemetry-val">gemini-flash-lite</span>
+        </div>
+        <div class="telemetry-item">
+          <span>Voice Model</span>
+          <span class="telemetry-val">Christopher (Neural)</span>
+        </div>
+      </div>
+
+      <div class="telemetry-card">
+        <div class="telemetry-title">Knowledge Graph Sync</div>
+        <div class="telemetry-item">
+          <span>Storage</span>
+          <span class="telemetry-val">SQLite Memory</span>
+        </div>
+        <div class="telemetry-item">
+          <span>Context Mode</span>
+          <span class="telemetry-val">Adaptive Recall</span>
+        </div>
+      </div>
+
+      <div class="telemetry-card">
+        <div class="telemetry-title">Interview Demo Mode</div>
+        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+          Speak naturally into your microphone or type. The agent transcribes your voice, pulls memory context, reasons, and speaks back in high-fidelity neural audio.
+        </p>
+      </div>
+    </div>
+
+    <!-- Main Stage -->
+    <div class="main-stage">
+      <div class="top-bar">
+        <div class="status-indicator">
+          <div class="dot"></div>
+          <span>Audio Engine Online & Ready</span>
+        </div>
+        <div style="font-size: 12px; color: var(--text-muted);">
+          Bahria Enclave, Islamabad | Low Latency
+        </div>
+      </div>
+
+      <!-- Live Messages -->
+      <div class="transcript-stream" id="transcriptStream">
+        <div class="message assistant">
+          <div class="message-meta">
+            <span>Enki Neural Voice</span>
+            <span>Online</span>
+          </div>
+          Hello Idrees. Enki voice conversation system is active. Click the microphone orb or press Space to speak.
+        </div>
+      </div>
+
+      <!-- Voice Controller Dock -->
+      <div class="control-dock">
+        <div class="orb-container">
+          <div class="orb" id="micOrb" title="Click to Speak">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+              <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="status-text" id="statusText">Click orb or hold Space to talk</div>
+
+        <div class="voice-options">
+          <label>
+            <input type="checkbox" id="autoListenToggle"> Continuous Auto-Listen
+          </label>
+          <label>
+            <input type="checkbox" id="serverTtsToggle" checked> Neural Audio Stream (Edge-TTS)
+          </label>
+        </div>
+
+        <div class="input-row">
+          <input type="text" id="textInput" class="text-input" placeholder="Or type your message here...">
+          <button class="send-btn" id="sendBtn">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="audioPlayer" style="display: none;"></audio>
+
+  <script>
+    const transcriptStream = document.getElementById("transcriptStream");
+    const micOrb = document.getElementById("micOrb");
+    const statusText = document.getElementById("statusText");
+    const textInput = document.getElementById("textInput");
+    const sendBtn = document.getElementById("sendBtn");
+    const autoListenToggle = document.getElementById("autoListenToggle");
+    const serverTtsToggle = document.getElementById("serverTtsToggle");
+    const audioPlayer = document.getElementById("audioPlayer");
+
+    let isListening = false;
+    let recognition = null;
+    let conversationHistory = [];
+
+    // Initialize Web Speech Recognition if supported
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      recognition.onstart = () => {
+        isListening = true;
+        micOrb.className = "orb listening";
+        statusText.innerText = "Listening to your voice...";
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        statusText.innerText = "Transcribed: " + transcript;
+        handleUserMessage(transcript);
+      };
+
+      recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        resetOrb();
+        statusText.innerText = "Voice input error (" + event.error + "). Try typing or click again.";
+      };
+
+      recognition.onend = () => {
+        isListening = false;
+        if (micOrb.classList.contains("listening")) {
+          resetOrb();
+        }
+      };
+    } else {
+      statusText.innerText = "Web Speech API not native; text mode active.";
+    }
+
+    function toggleListening() {
+      if (!recognition) {
+        alert("Speech Recognition not supported in this browser. Please use Google Chrome or Edge.");
+        return;
+      }
+      if (isListening) {
+        recognition.stop();
+        resetOrb();
+      } else {
+        recognition.start();
+      }
+    }
+
+    micOrb.addEventListener("click", toggleListening);
+
+    // Keyboard Space shortcut to toggle speech
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && document.activeElement !== textInput) {
+        e.preventDefault();
+        toggleListening();
+      }
+    });
+
+    sendBtn.addEventListener("click", () => {
+      const text = textInput.value.trim();
+      if (text) {
+        textInput.value = "";
+        handleUserMessage(text);
+      }
+    });
+
+    textInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        sendBtn.click();
+      }
+    });
+
+    function resetOrb() {
+      isListening = false;
+      micOrb.className = "orb";
+      statusText.innerText = "Click orb or hold Space to talk";
+    }
+
+    function addMessage(role, text) {
+      const msgDiv = document.createElement("div");
+      msgDiv.className = "message " + (role === "user" ? "user" : "assistant");
+
+      const meta = document.createElement("div");
+      meta.className = "message-meta";
+      meta.innerHTML = `<span>${role === "user" ? "You (Voice Input)" : "Enki Voice Core"}</span><span>${new Date().toLocaleTimeString()}</span>`;
+
+      const content = document.createElement("div");
+      content.innerText = text;
+
+      msgDiv.appendChild(meta);
+      msgDiv.appendChild(content);
+      transcriptStream.appendChild(msgDiv);
+      transcriptStream.scrollTop = transcriptStream.scrollHeight;
+
+      conversationHistory.push({ role, content: text });
+    }
+
+    async function handleUserMessage(userText) {
+      addMessage("user", userText);
+      micOrb.className = "orb thinking";
+      statusText.innerText = "Enki is reasoning...";
+
+      try {
+        const response = await fetch("/api/voice/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: userText,
+            history: conversationHistory,
+            use_neural_tts: serverTtsToggle.checked
+          })
+        });
+
+        const data = await response.json();
+        addMessage("assistant", data.reply);
+
+        if (data.audio_url && serverTtsToggle.checked) {
+          playServerAudio(data.audio_url);
+        } else {
+          speakBrowser(data.reply);
+        }
+      } catch (err) {
+        console.error("Chat error:", err);
+        statusText.innerText = "Communication error. Check backend.";
+        resetOrb();
+      }
+    }
+
+    function playServerAudio(url) {
+      micOrb.className = "orb speaking";
+      statusText.innerText = "Enki is speaking...";
+      audioPlayer.src = url;
+      audioPlayer.play();
+
+      audioPlayer.onended = () => {
+        resetOrb();
+        if (autoListenToggle.checked && recognition) {
+          setTimeout(() => recognition.start(), 400);
+        }
+      };
+
+      audioPlayer.onerror = () => {
+        resetOrb();
+      };
+    }
+
+    function speakBrowser(text) {
+      if (!window.speechSynthesis) {
+        resetOrb();
+        return;
+      }
+      micOrb.className = "orb speaking";
+      statusText.innerText = "Enki is speaking...";
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.05;
+      utterance.onend = () => {
+        resetOrb();
+        if (autoListenToggle.checked && recognition) {
+          setTimeout(() => recognition.start(), 400);
+        }
+      };
+      window.speechSynthesis.speak(utterance);
+    }
+  </script>
+</body>
+</html>

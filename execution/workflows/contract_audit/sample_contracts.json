@@ -1,0 +1,105 @@
+[
+  {
+    "contract_id": "MSA-2026-081",
+    "contract_title": "Enterprise Cloud Master Services Agreement",
+    "counterparty_name": "CloudPlatform Global Infrastructure Corp",
+    "contract_type": "MASTER_SERVICES_AGREEMENT",
+    "annual_contract_value_usd": 185000.00,
+    "effective_date": "2026-10-01",
+    "clauses": [
+      {
+        "clause_id": "SEC-8.1",
+        "clause_category": "LIMITATION_OF_LIABILITY",
+        "original_text": "Neither party shall limit liability for indirect, punitive, or consequential damages arising out of service interruptions or data corruption, and vendor liability shall be uncapped.",
+        "stated_risk_level": "CRITICAL",
+        "trap_type": "UNCAPPED_CONSEQUENTIAL_DAMAGES",
+        "proposed_redline": "Except for gross negligence or willful misconduct, in no event shall either party be liable for indirect, incidental, or consequential damages. Total aggregate liability under this agreement shall be strictly capped at the fees paid by customer in the preceding twelve (12) month period.",
+        "rationale": "Uncapped consequential damages expose vendor balance sheet to catastrophic ruin from minor infrastructure outages. Standard enterprise market standard is a 12 month trailing fees cap."
+      },
+      {
+        "clause_id": "SEC-11.4",
+        "clause_category": "INDEMNIFICATION",
+        "original_text": "Vendor agrees to indemnify, defend, and hold harmless Customer and all affiliates against any and all third party claims, losses, or expenses whatsoever, regardless of fault.",
+        "stated_risk_level": "CRITICAL",
+        "trap_type": "UNILATERAL_BROAD_INDEMNIFICATION",
+        "proposed_redline": "Each party shall defend and indemnify the other party against direct third party claims alleging intellectual property infringement or material breach of confidentiality, to the extent caused by the indemnifying party's negligence.",
+        "rationale": "Original clause is non mutual and imposes strict liability regardless of fault. Standard enterprise practice requires mutual indemnification scoped strictly to IP infringement and gross negligence."
+      },
+      {
+        "clause_id": "SEC-4.2",
+        "clause_category": "PAYMENT_TERMS",
+        "original_text": "Invoices shall be payable within ninety (90) days from delivery of services. Customer reserves the right to withhold payment during any unresolved operational inquiry.",
+        "stated_risk_level": "WARNING",
+        "trap_type": "NET_90_DELAY_AND_UNILATERAL_WITHHOLDING",
+        "proposed_redline": "Invoices shall be payable within thirty (30) days of receipt (Net 30). In the event of a good faith dispute regarding a specific line item, Customer shall pay all undisputed amounts on time while parties resolve the disputed portion within fifteen (15) business days.",
+        "rationale": "Net 90 creates a 3 month cash flow lag and unilateral withholding allows counterparty to hold up undisputed balances arbitrarily."
+      }
+    ]
+  },
+  {
+    "contract_id": "SOW-2026-044",
+    "contract_title": "Autonomous AI Agent Integration SOW",
+    "counterparty_name": "Apex Global Logistics Systems",
+    "contract_type": "STATEMENT_OF_WORK",
+    "annual_contract_value_usd": 120000.00,
+    "effective_date": "2026-10-15",
+    "clauses": [
+      {
+        "clause_id": "SOW-5.3",
+        "clause_category": "INTELLECTUAL_PROPERTY",
+        "original_text": "Customer shall exclusively own all deliverables, models, background software libraries, tools, and code architectures utilized or created by Vendor during performance of the project.",
+        "stated_risk_level": "CRITICAL",
+        "trap_type": "FORFEITURE_OF_PREEXISTING_IP",
+        "proposed_redline": "Customer shall own bespoke business logic outputs and custom integrations created exclusively for Customer. Vendor retains full exclusive ownership of all pre-existing IP, proprietary agent architectures, foundational code libraries, and generic workflow patterns, granting Customer a non exclusive, perpetual license to use the deliverables.",
+        "rationale": "Forfeits vendor proprietary agent codebase and framework libraries. Pre existing intellectual property must remain strictly with vendor under license."
+      },
+      {
+        "clause_id": "SOW-9.1",
+        "clause_category": "TERMINATION",
+        "original_text": "Customer may terminate this Statement of Work at any time for convenience with zero days written notice and without obligation to pay for unbilled work in progress.",
+        "stated_risk_level": "WARNING",
+        "trap_type": "IMMEDIATE_TERMINATION_WITHOUT_PAYMENT",
+        "proposed_redline": "Either party may terminate this Statement of Work for convenience upon thirty (30) days prior written notice. Upon termination, Customer shall immediately pay Vendor for all work performed and non cancelable commitments incurred through the effective termination date.",
+        "rationale": "Zero notice termination without paying work in progress leaves vendor bearing stranded engineering costs."
+      }
+    ]
+  },
+  {
+    "contract_id": "DPA-2026-019",
+    "contract_title": "Enterprise Data Processing & Security Agreement",
+    "counterparty_name": "Horizon Health Partners LLC",
+    "contract_type": "DATA_PROCESSING_AGREEMENT",
+    "annual_contract_value_usd": 95000.00,
+    "effective_date": "2026-11-01",
+    "clauses": [
+      {
+        "clause_id": "DPA-7.2",
+        "clause_category": "AUDIT_RIGHTS",
+        "original_text": "Customer may conduct unrestricted on site physical audits of Vendor data centers and engineering offices at any time with twenty-four (24) hours notice at Vendor sole expense.",
+        "stated_risk_level": "WARNING",
+        "trap_type": "UNRESTRICTED_ON_SITE_AUDITS_AT_VENDOR_EXPENSE",
+        "proposed_redline": "Upon thirty (30) days prior written notice and not more than once every twelve (12) months, Customer may conduct a remote compliance audit during normal business hours. Alternatively, Vendor provision of an annual third-party SOC 2 Type II compliance audit report shall satisfy this audit requirement. Audits shall be conducted at Customer expense.",
+        "rationale": "24 hour physical inspection at vendor expense violates cloud shared responsibility models and exposes multi tenant data center facilities."
+      }
+    ]
+  },
+  {
+    "contract_id": "VENDOR-2026-112",
+    "contract_title": "Master Professional Services Agreement",
+    "counterparty_name": "Vanguard Media & Marketing Group",
+    "contract_type": "VENDOR_AGREEMENT",
+    "annual_contract_value_usd": 74000.00,
+    "effective_date": "2026-11-15",
+    "clauses": [
+      {
+        "clause_id": "VEND-14.1",
+        "clause_category": "NON_COMPETE",
+        "original_text": "Vendor agrees not to provide automation, engineering, or software services to any business operating in the marketing, media, or advertising sector for two (2) years following contract execution.",
+        "stated_risk_level": "CRITICAL",
+        "trap_type": "EXCESSIVE_NON_COMPETE_RESTRAINT_OF_TRADE",
+        "proposed_redline": "Vendor agrees not to solicit Customer direct employees during the term of this agreement. No restraint on Vendor general trade, profession, or commercial engagements with third parties shall apply.",
+        "rationale": "A 2 year broad industry non compete severely restricts vendor core commercial business model and violates California and standard commercial trade laws."
+      }
+    ]
+  }
+]

@@ -1,0 +1,288 @@
+[
+  {
+    "invoice_id": "INV-2026-0891",
+    "vendor_name": "Apex Cloud & GPU Infrastructure Inc",
+    "vendor_category": "Cloud Infrastructure",
+    "invoice_date": "2026-09-01",
+    "due_date": "2026-09-30",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "NVIDIA A100 GPU Cluster Compute (720 hrs)", "quantity": 720, "unit_price": 8.50, "amount": 6120.00},
+      {"description": "Egress Bandwidth (14.2 TB)", "quantity": 14.2, "unit_price": 120.00, "amount": 1704.00},
+      {"description": "Persistent Volume Storage (8TB SSD)", "quantity": 8, "unit_price": 110.00, "amount": 880.00},
+      {"description": "Managed Kubernetes Control Plane", "quantity": 1, "unit_price": 346.00, "amount": 346.00},
+      {"description": "Load Balancer Reserved Capacity", "quantity": 1, "unit_price": 400.00, "amount": 400.00}
+    ],
+    "subtotal": 9450.00,
+    "tax": 756.00,
+    "total_amount": 10206.00,
+    "po_reference": "PO-2026-0041",
+    "notes": "Production ML training cluster Q3"
+  },
+  {
+    "invoice_id": "INV-2026-0892",
+    "vendor_name": "Apex Volt Subcontractors Ltd",
+    "vendor_category": "Electrical & Facilities",
+    "invoice_date": "2026-09-03",
+    "due_date": "2026-10-03",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Panel Upgrade Labor (Warehouse B)", "quantity": 40, "unit_price": 85.00, "amount": 3400.00},
+      {"description": "Circuit Breaker Installation (12 units)", "quantity": 12, "unit_price": 95.00, "amount": 1140.00},
+      {"description": "Conduit Material and Wiring", "quantity": 1, "unit_price": 960.00, "amount": 1960.00}
+    ],
+    "subtotal": 6500.00,
+    "tax": 520.00,
+    "total_amount": 7020.00,
+    "po_reference": "PO-2026-0038",
+    "notes": "Anomaly: line 3 amount stated 1960 vs computed 960"
+  },
+  {
+    "invoice_id": "INV-2026-0893",
+    "vendor_name": "Titan Freight & Hauling Systems",
+    "vendor_category": "Freight & Logistics",
+    "invoice_date": "2026-09-05",
+    "due_date": "2026-10-05",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Full Truckload Dallas to Chicago (4 loads)", "quantity": 4, "unit_price": 1800.00, "amount": 7200.00},
+      {"description": "Fuel Surcharge", "quantity": 4, "unit_price": 187.50, "amount": 750.00}
+    ],
+    "subtotal": 7950.00,
+    "tax": 0.00,
+    "total_amount": 7950.00,
+    "po_reference": "PO-2026-0029",
+    "notes": "Anomaly: duplicate submission already in settled ledger"
+  },
+  {
+    "invoice_id": "INV-2026-0894",
+    "vendor_name": "Vanguard Creative & Media Agency",
+    "vendor_category": "Marketing & Media",
+    "invoice_date": "2026-09-10",
+    "due_date": "2026-10-10",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Q4 Campaign Strategy Retainer", "quantity": 1, "unit_price": 8500.00, "amount": 8500.00},
+      {"description": "Video Production (3 hero ads 4K)", "quantity": 3, "unit_price": 2800.00, "amount": 8400.00},
+      {"description": "LinkedIn Ad Creative Pack (20 assets)", "quantity": 20, "unit_price": 140.00, "amount": 2800.00}
+    ],
+    "subtotal": 19700.00,
+    "tax": 1576.00,
+    "total_amount": 21276.00,
+    "po_reference": "PO-2026-0055",
+    "notes": "Anomaly: 87% above historical vendor baseline"
+  },
+  {
+    "invoice_id": "INV-2026-0895",
+    "vendor_name": "Blackstone Corporate Legal Partners",
+    "vendor_category": "Legal & Compliance",
+    "invoice_date": "2026-09-12",
+    "due_date": "2026-10-12",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Enterprise SaaS Agreement Review", "quantity": 12, "unit_price": 280.00, "amount": 3360.00},
+      {"description": "IP Clause Negotiation (Senior Associate)", "quantity": 8, "unit_price": 310.00, "amount": 2480.00},
+      {"description": "Regulatory Compliance Filing", "quantity": 1, "unit_price": 950.00, "amount": 950.00}
+    ],
+    "subtotal": 6790.00,
+    "tax": 543.20,
+    "total_amount": 7333.20,
+    "po_reference": "PO-2026-0061",
+    "notes": "Annual enterprise contract legal services"
+  },
+  {
+    "invoice_id": "INV-2026-0896",
+    "vendor_name": "Orion Data Pipelines Corp",
+    "vendor_category": "Data Engineering",
+    "invoice_date": "2026-09-14",
+    "due_date": "2026-10-14",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Kafka Managed Cluster (720 hrs)", "quantity": 720, "unit_price": 3.20, "amount": 2304.00},
+      {"description": "dbt Core Transformation Jobs", "quantity": 1, "unit_price": 1800.00, "amount": 1800.00},
+      {"description": "Airbyte Connector Development (4 connectors)", "quantity": 4, "unit_price": 650.00, "amount": 2600.00},
+      {"description": "Snowflake Compute Credits XL Warehouse", "quantity": 1, "unit_price": 2100.00, "amount": 2100.00}
+    ],
+    "subtotal": 8804.00,
+    "tax": 704.32,
+    "total_amount": 9508.32,
+    "po_reference": "PO-2026-0063",
+    "notes": "Monthly data pipeline infrastructure"
+  },
+  {
+    "invoice_id": "INV-2026-0897",
+    "vendor_name": "Nexus Security Operations LLC",
+    "vendor_category": "Cybersecurity",
+    "invoice_date": "2026-09-15",
+    "due_date": "2026-10-15",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "SOC 2 Type II Penetration Test", "quantity": 1, "unit_price": 4200.00, "amount": 4200.00},
+      {"description": "SIEM Managed Detection and Response", "quantity": 1, "unit_price": 2400.00, "amount": 2400.00},
+      {"description": "Vulnerability Assessment Report", "quantity": 1, "unit_price": 1100.00, "amount": 1100.00}
+    ],
+    "subtotal": 7700.00,
+    "tax": 616.00,
+    "total_amount": 8316.00,
+    "po_reference": "PO-2026-0067",
+    "notes": "Q3 security operations retainer"
+  },
+  {
+    "invoice_id": "INV-2026-0898",
+    "vendor_name": "Meridian Office Supplies & Facilities",
+    "vendor_category": "Office & Facilities",
+    "invoice_date": "2026-09-16",
+    "due_date": "2026-10-16",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Ergonomic Workstation Chairs (24 units)", "quantity": 24, "unit_price": 420.00, "amount": 10080.00},
+      {"description": "Standing Desk Converters (12 units)", "quantity": 12, "unit_price": 185.00, "amount": 2220.00},
+      {"description": "Conference Table (1 unit)", "quantity": 1, "unit_price": 1850.00, "amount": 1850.00}
+    ],
+    "subtotal": 14150.00,
+    "tax": 1132.00,
+    "total_amount": 15282.00,
+    "po_reference": "PO-2026-0069",
+    "notes": "Anomaly: 43% above Q2 furniture baseline"
+  },
+  {
+    "invoice_id": "INV-2026-0899",
+    "vendor_name": "Stellarcomm Telecom & Network",
+    "vendor_category": "Telecommunications",
+    "invoice_date": "2026-09-17",
+    "due_date": "2026-10-17",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "10 Gbps Dedicated Fiber Leased Line (30 days)", "quantity": 1, "unit_price": 3200.00, "amount": 3200.00},
+      {"description": "SD-WAN Managed Service", "quantity": 1, "unit_price": 1400.00, "amount": 1400.00},
+      {"description": "VoIP Enterprise Seats (80 seats)", "quantity": 80, "unit_price": 22.00, "amount": 1760.00}
+    ],
+    "subtotal": 6360.00,
+    "tax": 508.80,
+    "total_amount": 6868.80,
+    "po_reference": "PO-2026-0071",
+    "notes": "Monthly enterprise telecom services"
+  },
+  {
+    "invoice_id": "INV-2026-0900",
+    "vendor_name": "BrightPath Recruitment Agency",
+    "vendor_category": "Human Resources",
+    "invoice_date": "2026-09-18",
+    "due_date": "2026-10-18",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Senior ML Engineer Placement (18% of 145k)", "quantity": 1, "unit_price": 26100.00, "amount": 26100.00},
+      {"description": "DevOps Engineer Placement (16% of 110k)", "quantity": 1, "unit_price": 17600.00, "amount": 17600.00}
+    ],
+    "subtotal": 43700.00,
+    "tax": 0.00,
+    "total_amount": 43700.00,
+    "po_reference": "PO-2026-0073",
+    "notes": "Anomaly: 315% above Q2 recruiting baseline"
+  },
+  {
+    "invoice_id": "INV-2026-0901",
+    "vendor_name": "SwiftPrint Commercial Printing",
+    "vendor_category": "Print & Marketing",
+    "invoice_date": "2026-09-19",
+    "due_date": "2026-10-19",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Event Banners 6x10ft (8 units)", "quantity": 8, "unit_price": 145.00, "amount": 1160.00},
+      {"description": "Branded Brochures (2000 units full color)", "quantity": 2000, "unit_price": 0.85, "amount": 1700.00},
+      {"description": "Executive Business Cards (500 units)", "quantity": 500, "unit_price": 0.35, "amount": 175.00}
+    ],
+    "subtotal": 3035.00,
+    "tax": 242.80,
+    "total_amount": 3277.80,
+    "po_reference": "PO-2026-0075",
+    "notes": "Q4 conference collateral print run"
+  },
+  {
+    "invoice_id": "INV-2026-0902",
+    "vendor_name": "HealthBridge Corporate Wellness",
+    "vendor_category": "Employee Benefits",
+    "invoice_date": "2026-09-20",
+    "due_date": "2026-10-20",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Group Health Plan Premium (85 employees)", "quantity": 85, "unit_price": 420.00, "amount": 35700.00},
+      {"description": "Dental and Vision Rider (85 employees)", "quantity": 85, "unit_price": 58.00, "amount": 4930.00},
+      {"description": "Mental Health EAP Subscription", "quantity": 1, "unit_price": 1200.00, "amount": 1200.00}
+    ],
+    "subtotal": 41830.00,
+    "tax": 0.00,
+    "total_amount": 41830.00,
+    "po_reference": "PO-2026-0077",
+    "notes": "Monthly benefits carrier invoice"
+  },
+  {
+    "invoice_id": "INV-2026-0903",
+    "vendor_name": "TechTrack Asset Management",
+    "vendor_category": "IT Asset Management",
+    "invoice_date": "2026-09-22",
+    "due_date": "2026-10-22",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "MacBook Pro M3 Max (6 units)", "quantity": 6, "unit_price": 3499.00, "amount": 20994.00},
+      {"description": "Enterprise SSD External Drives (12 units)", "quantity": 12, "unit_price": 180.00, "amount": 2160.00},
+      {"description": "4K Ultrawide Monitor (6 units)", "quantity": 6, "unit_price": 780.00, "amount": 4680.00}
+    ],
+    "subtotal": 27834.00,
+    "tax": 2226.72,
+    "total_amount": 30060.72,
+    "po_reference": "PO-2026-0079",
+    "notes": "Hardware refresh cycle Q3"
+  },
+  {
+    "invoice_id": "INV-2026-0904",
+    "vendor_name": "Cleantech Maintenance Services",
+    "vendor_category": "Facilities Management",
+    "invoice_date": "2026-09-24",
+    "due_date": "2026-10-24",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Commercial Office Deep Clean (4 visits)", "quantity": 4, "unit_price": 680.00, "amount": 2720.00},
+      {"description": "HVAC Filter Replacement (12 units)", "quantity": 12, "unit_price": 45.00, "amount": 540.00},
+      {"description": "Restroom Supply Restocking monthly", "quantity": 1, "unit_price": 360.00, "amount": 360.00}
+    ],
+    "subtotal": 3620.00,
+    "tax": 289.60,
+    "total_amount": 3909.60,
+    "po_reference": "PO-2026-0081",
+    "notes": "Monthly facilities maintenance"
+  },
+  {
+    "invoice_id": "INV-2026-0905",
+    "vendor_name": "Globalink Translation Services",
+    "vendor_category": "Language & Localization",
+    "invoice_date": "2026-09-26",
+    "due_date": "2026-10-26",
+    "payment_terms": "Net 30",
+    "currency": "USD",
+    "line_items": [
+      {"description": "Technical Documentation EN to ES (12000 words)", "quantity": 12000, "unit_price": 0.14, "amount": 1680.00},
+      {"description": "UI Localization Strings (4 languages)", "quantity": 4, "unit_price": 850.00, "amount": 3400.00},
+      {"description": "Legal Contract Translation EN to DE", "quantity": 1, "unit_price": 1200.00, "amount": 1200.00}
+    ],
+    "subtotal": 6280.00,
+    "tax": 502.40,
+    "total_amount": 6782.40,
+    "po_reference": "PO-2026-0083",
+    "notes": "International product launch localization"
+  }
+]

@@ -1,0 +1,88 @@
+{
+  "updatedAt": "2026-09-19T14:30:42.000Z",
+  "createdAt": "2026-09-10T00:23:19.961Z",
+  "id": "UEswT6JLi0ywRrtS",
+  "name": "Global Error Handler",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {},
+      "id": "aa8f850d-44d5-40ba-8bba-db80ab09bdb8"
+    },
+    {
+      "name": "Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=\ud83d\udea8 *n8n Workflow Failed* \ud83d\udea8\n\n*Workflow:* {{$json.execution.workflow.name}}\n*Node that failed:* {{$json.execution.error.node.name}}\n*Error Message:* {{$json.execution.error.message}}\n\n*Execution URL:* {{$json.execution.url}}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "e80102c2-aedd-4fa2-9bc6-1a4b3b09aa75",
+      "webhookId": "0fbc8f3f-3735-4bc8-be97-737ec7764208"
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {},
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "50703ee3-09a1-429f-b24f-67dac44883ba",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-10T00:23:19.972Z",
+      "createdAt": "2026-09-10T00:23:19.972Z",
+      "role": "workflow:owner",
+      "workflowId": "UEswT6JLi0ywRrtS",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "updatedAt": "2026-09-19T14:34:36.000Z",
+  "createdAt": "2026-09-15T11:05:01.965Z",
+  "id": "V84kMkDBqTB3GkAE",
+  "name": "My workflow 7",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "42c3357a-3ba2-4a6d-a44d-d5d33b1b4b84",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "12nhIBeUxHfjNMQCGjZ2Slkm7qaxhxS0t4oF4gL_zv8E",
+          "mode": "list",
+          "cachedResultName": "All 100 Businesses & Instagram URLs - New York (Complete)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12nhIBeUxHfjNMQCGjZ2Slkm7qaxhxS0t4oF4gL_zv8E/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1927347112,
+          "mode": "list",
+          "cachedResultName": "All 100 Businesses & Instagram URLs - New York (Complete)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/12nhIBeUxHfjNMQCGjZ2Slkm7qaxhxS0t4oF4gL_zv8E/edit#gid=1927347112"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "id": "65a681ef-f500-4a5e-9686-13e201d23d99",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "DlW6CGRkA6cPkjYs",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "bb91a1c5-127d-46a0-bb16-5706cf442a17",
+  "activeVersionId": null,
+  "versionCounter": 21,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-15T11:05:01.967Z",
+      "createdAt": "2026-09-15T11:05:01.967Z",
+      "role": "workflow:owner",
+      "workflowId": "V84kMkDBqTB3GkAE",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

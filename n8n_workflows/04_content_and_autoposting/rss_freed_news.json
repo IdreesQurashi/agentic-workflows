@@ -1,0 +1,625 @@
+{
+  "updatedAt": "2026-09-14T17:26:00.109Z",
+  "createdAt": "2026-09-11T03:17:54.793Z",
+  "id": "ozURtig5uprexCmE",
+  "name": "RSS Freed News",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "numberInputs": 7
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        -48
+      ],
+      "id": "54b72678-3c67-484b-a470-c0c4d9c7397d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "url": "https://openai.com/news/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -512
+      ],
+      "id": "a6ad69be-a443-4e39-9f46-afdde54e0da4",
+      "name": "RSS feed openAI news"
+    },
+    {
+      "parameters": {
+        "url": "https://www.any-feeds.com/api/feeds/custom/cmlvzoxzq0000k004xiy14qf6/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -320
+      ],
+      "id": "0f530f32-da8d-4727-859f-6e577b93ea08",
+      "name": "RSS feed Anthropic"
+    },
+    {
+      "parameters": {
+        "url": "https://deepmind.google/blog/feed/basic/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        32
+      ],
+      "id": "fde06e2f-5eb5-4b62-921f-be0ce462db26",
+      "name": "RSS general AI hot news"
+    },
+    {
+      "parameters": {
+        "url": "https://huggingface.co/blog/feed.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        -128
+      ],
+      "id": "9919739c-5687-4cf6-b535-f7ffca5b0ea7",
+      "name": "RSS feed hugging face"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0aa8179a-3308-46e8-8063-99ee0a292b73",
+              "leftValue": "={{ $json.isoDate }}",
+              "rightValue": "={{ $today.minus({ days: 1 }).toISO() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        512,
+        32
+      ],
+      "id": "057de9e3-ed58-4598-b945-f677e653c7fc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "046fc904-dfc3-438f-b6ad-a40237251c5b",
+              "name": "title",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "1433f4a6-021f-4d02-a285-e9b29a6e2f19",
+              "name": "content",
+              "value": "={{ $json.contentSnippet }}",
+              "type": "string"
+            },
+            {
+              "id": "b8c52a13-6173-40ba-b516-68cd5fc3e8c5",
+              "name": "link",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1008,
+        16
+      ],
+      "id": "941a1af3-6a08-44ea-9693-9e3d8ef96d9f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-lite-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-lite-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a ruthlessly objective AI trend analyst. Your function is to evaluate the viral potential, market disruption, and real-world impact of AI news.",
+              "role": "model"
+            },
+            {
+              "content": "==Evaluate the following AI news summary and score its importance on a scale of 1 to 10. \n\nSCORING CRITERIA:\n- 1-3: Trivial updates, minor bug fixes, low impact.\n- 4-6: Moderate interest, incremental improvements.\n- 7-8: Major feature releases, strong market impact, highly shareable.\n- 9-10: Paradigm-shifting breakthroughs, massive industry disruption.\n\nSTRICT OUTPUT FORMAT:\nYou must return the exact summary text provided, followed by two newlines, and then exactly \"Rating: X\" (where X is your numerical score). Do not add any other words.\n\nExample Output:\nThis is the exact summary text that you received.\n\nRating: 8\n\nHere is the summary to evaluate:\n{{ $json.content.parts[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {
+          "codeExecution": false
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1776,
+        16
+      ],
+      "id": "7b932de4-786c-49d2-81d6-80668479ed6a",
+      "name": "Rating the summary",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vvxfmXZ3AVztd90O",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Error in gemini node 2"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-lite-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-lite-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are an elite, minimalist tech editor. Your sole function is to condense raw RSS data into high-signal, punchy summaries.",
+              "role": "model"
+            },
+            {
+              "content": "==Analyze the following RSS feed data and generate a dense, high-signal summary.\n\nSTRICT RULES:\n1. Length: Exactly 1 to 3 concise sentences.\n2. Focus: Highlight the core technological breakthrough, impact, or business value.\n3. Formatting: Output ONLY the raw summary text. Absolutely zero introductory filler (Do not write \"Here is the summary:\" or \"Summary:\").\n4. Do not include the title or URL in your response.\n\nInput Data:\nTitle: {{ $json.title }}\nContent:  {{ $json.content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1232,
+        16
+      ],
+      "id": "aba2023b-d609-4682-9af1-0175993887ab",
+      "name": "Generatign the summary",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vvxfmXZ3AVztd90O",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Error in gemini node 1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        16
+      ],
+      "id": "63cf8876-637f-485d-b5f0-a91057ac0611",
+      "name": "Wait",
+      "webhookId": "92750351-ee11-443e-ad3b-7cbe47953915"
+    },
+    {
+      "parameters": {
+        "url": "https://blog.google/technology/ai/rss/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        192
+      ],
+      "id": "c2ef1a88-f8c9-4885-a72b-60a6e0bbe16f",
+      "name": "Google blog"
+    },
+    {
+      "parameters": {
+        "url": "https://www.marktechpost.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        368
+      ],
+      "id": "b19dc6a9-c90f-4aff-90e7-b29ff9731fb0",
+      "name": "Marktech post"
+    },
+    {
+      "parameters": {
+        "url": "https://rss.arxiv.org/rss/cs.AI",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -176,
+        544
+      ],
+      "id": "31e40e90-086a-4a73-a3f5-543e0b9bbdde",
+      "name": "New releases"
+    },
+    {
+      "parameters": {
+        "jsCode": "let items = $input.all();\nlet parsedItems = items.map(item => {\n  let textString = \"\";\n  if (item.json.content && item.json.content.parts && item.json.content.parts[0]) {\n      textString = item.json.content.parts[0].text || \"\";\n  } else if (typeof item.json.content === \"string\") {\n      textString = item.json.content;\n  } else {\n      textString = JSON.stringify(item.json.content);\n  }\n  \n  const match = textString.match(/([\\s\\S]*?)(?:[\\r\\n\\s-]+[Rr]ating:\\s*|[\\r\\n]+)(\\d+(?:\\/\\d+)?)\\s*$/);\n  \n  if (match) {\n    let rawRating = match[2].includes('/') ? match[2].split('/')[0] : match[2];\n    return {\n      json: {\n        data: match[1].trim(),\n        rating: parseFloat(rawRating) || 0\n      }\n    };\n  } else {\n    return {\n      json: {\n        data: textString,\n        rating: 0\n      }\n    };\n  }\n});\n\n// Sort by rating descending (highest first)\nparsedItems.sort((a, b) => b.json.rating - a.json.rating);\n\n// Return exactly the top 5 posts\nreturn parsedItems.slice(0, 5);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2096,
+        16
+      ],
+      "id": "1ff7da0e-b135-47f4-b89d-4e02853f010b",
+      "name": "Top 5 posts filter V2"
+    },
+    {
+      "parameters": {
+        "maxItems": 10
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        784,
+        32
+      ],
+      "id": "0e00d2f3-f3ab-4751-9dd5-4ffed8e59436",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "jsCode": "let items = $input.all();\n\n// Use HTML formatting since Gmail renders the email as HTML\nlet combinedText = \"<h2>Here are the top AI news for today:</h2><br>\";\n\n// Loop through the items and stitch them together with HTML breaks\nitems.forEach((item, index) => {\n  combinedText += `<b>${index + 1}.</b> ${item.json.data}<br><br>`;\n  \n  // Adds a clean horizontal divider line between posts\n  combinedText += `<hr><br>`;\n});\n\n// Return a single item so the next node (Gmail) only runs once\nreturn [{\n  json: {\n    data: combinedText\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        16
+      ],
+      "name": "Combine to One Email",
+      "id": "b11f48b0-3f07-4dd3-bc7c-97a4bedd09b5"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -608,
+        32
+      ],
+      "id": "44995e59-cb08-41ea-a76d-e717f6e383d9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "6121hillcroft77081@gmail.com",
+        "subject": "RSS summaries rating",
+        "message": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2448,
+        16
+      ],
+      "id": "bfe9b672-c757-4ba1-99dd-9ea23d35d563",
+      "name": "Send a message1",
+      "webhookId": "ee00fb8d-c00d-461c-bded-0874b87c0ec4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cmK3BbZGxXjQkleW",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS feed openAI news": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS feed Anthropic": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RSS general AI hot news": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "RSS feed hugging face": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Generatign the summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rating the summary": {
+      "main": [
+        [
+          {
+            "node": "Top 5 posts filter V2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Generatign the summary": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Rating the summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google blog": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "Marktech post": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "New releases": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Top 5 posts filter V2": {
+      "main": [
+        [
+          {
+            "node": "Combine to One Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine to One Email": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS feed openAI news",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS feed Anthropic",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS feed hugging face",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS general AI hot news",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Google blog",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Marktech post",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "New releases",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "cff1bfc3-b831-4e18-8a74-1768f28afb74",
+  "activeVersionId": null,
+  "versionCounter": 497,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-11T03:17:54.806Z",
+      "createdAt": "2026-09-11T03:17:54.806Z",
+      "role": "workflow:owner",
+      "workflowId": "ozURtig5uprexCmE",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

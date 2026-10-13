@@ -1,0 +1,114 @@
+{
+  "schema_version": "2.0.0",
+  "blueprint_id": "workflow_2_autonomous_dev",
+  "name": "Production Multi-Agent Autonomous Software Engineer & Code Architect",
+  "architectural_class": "Production Hierarchical Multi-Agent Software Development System",
+  "paradigm": "Devin / SWE-agent / OpenHands Paradigm",
+  "creators": [
+    {
+      "name": "IndyDevDan (Daniel Avila)",
+      "role": "Agentic Engineer & Orchestration Pioneer",
+      "channel": "https://www.youtube.com/@indydevdan"
+    },
+    {
+      "name": "Dave Ebbelaar",
+      "role": "Datalumina AI Architect",
+      "channel": "https://www.youtube.com/@daveebbelaar"
+    }
+  ],
+  "reference_media": [
+    "Claude Code Multi-Agent Orchestration with Opus, Tmux and Agent Sandboxes (IndyDevDan)",
+    "Building Autonomous AI Software Engineers in LangGraph (Dave Ebbelaar)"
+  ],
+  "problem_solved": {
+    "vibe_coding_failures": [
+      "Context window contamination and token blowout from loading whole repositories",
+      "Host pollution and blast radius risks from uncontained script execution",
+      "Absence of empirical verification and runtime stack trace feedback",
+      "Infinite hallucination loops modifying identical lines without root cause discovery"
+    ],
+    "solution_mechanism": "Autonomous TDD Red-Green-Audit loop with context-isolated agents and ephemeral execution sandboxes"
+  },
+  "stack_components": {
+    "orchestration": "LangGraph (StateGraph)",
+    "sandboxing": "Ephemeral Subprocess / Docker Containers / E2B Cloud Sandboxes",
+    "testing_engine": "Python Unittest / Pytest / Isolated Traceback Sanitizer",
+    "static_analysis": "Python AST Security Auditor / Ruff / Semgrep",
+    "version_control": "Git CLI / GitHub MCP"
+  },
+  "agent_roles": [
+    {
+      "role": "lead_architect",
+      "title": "Lead Architect & Planner Agent",
+      "classification": "Coordinator",
+      "context_boundary": "High-level directory structure, interfaces, issue text. Strictly prohibited from writing implementation code.",
+      "deliverables": [
+        "Directed Acyclic Graph (DAG) of subtasks",
+        "Target file modification boundaries",
+        "Acceptance criteria and reproduction test requirements"
+      ]
+    },
+    {
+      "role": "coder_implementer",
+      "title": "Coder & Implementer Agent",
+      "classification": "Specialized Builder",
+      "context_boundary": "Isolated context containing only target source file, issue spec, and failing stack traces.",
+      "deliverables": [
+        "Reproduction test code (Red phase)",
+        "Surgical source code patches (Green phase)",
+        "Root cause hypotheses and correction edits"
+      ]
+    },
+    {
+      "role": "sandbox_test_runner",
+      "title": "Test Runner Sandbox Agent",
+      "classification": "Empirical Executor",
+      "context_boundary": "Isolated ephemeral directory or container. Zero access to host OS files.",
+      "deliverables": [
+        "Structured execution receipts",
+        "Exit codes and test status badges",
+        "Noise-stripped high-signal tracebacks"
+      ]
+    },
+    {
+      "role": "critic_auditor",
+      "title": "Critic & Security Auditor Agent",
+      "classification": "The Gatekeeper",
+      "context_boundary": "Unified git diff and AST parse trees. Evaluated with adversarial senior engineer lens.",
+      "deliverables": [
+        "AST security clearance (no eval/exec/os.system)",
+        "Secret leak inspection",
+        "Target boundary compliance verification"
+      ]
+    },
+    {
+      "role": "git_release",
+      "title": "Git Tooling & Release Agent",
+      "classification": "The Deployer",
+      "context_boundary": "Repository lifecycle, git diff, and test receipts.",
+      "deliverables": [
+        "Ephemeral feature branch creation",
+        "Conventional commit generation",
+        "Enterprise-grade Pull Request with empirical TDD proof"
+      ]
+    }
+  ],
+  "tdd_state_machine": {
+    "red_phase": "Coder writes reproduction test; Sandbox executes test on unpatched code to prove bug existence via non-zero exit code.",
+    "green_phase": "Coder crafts surgical patch; Sandbox re-executes test suite until all assertions pass (exit code 0).",
+    "audit_phase": "Critic inspects git diff and runs AST security checks against hardcoded secrets and dangerous calls.",
+    "release_phase": "Git agent commits changes to a feature branch and formats production PR markdown with before/after receipts."
+  },
+  "safety_guardrails": {
+    "max_retries": 5,
+    "context_shielding": true,
+    "ephemeral_workspace_cleanup": true,
+    "ast_forbidden_calls": ["eval", "exec", "__import__", "compile", "os.system"],
+    "credential_regex_scan": true
+  },
+  "runtime_entrypoint": {
+    "script": "agent.py",
+    "sandbox_module": "sandbox.py",
+    "recommended_interpreter": "/home/idrees/job_agent/.venv/bin/python3"
+  }
+}

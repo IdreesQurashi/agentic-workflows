@@ -1,0 +1,99 @@
+{
+  "updatedAt": "2026-09-19T14:33:05.000Z",
+  "createdAt": "2026-09-12T03:14:44.400Z",
+  "id": "BnjLPjbaqFLjTUPy",
+  "name": "My workflow 4",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1592077a-3511-478d-be33-203bce7e29ac",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "sendTo": "6121Hillcroft77081@gmail.com",
+        "subject": "Rss Feed Hot News",
+        "emailType": "text",
+        "message": "Top % Rss News of today, Check it out                    1 :   C\u00e9sar de la Fuente\u2019s lab is leveraging OpenAI\u2019s Codex and ChatGPT to analyze living and extinct genomes. This approach aims to identify novel antimicrobial candidates to combat rising drug-resistant infections.                                                            2 :  OpenAI has introduced the Agents API, a managed service that simplifies building and launching cloud-based agents. It leverages the Codex harness to provide robust support for orchestration, long-running sessions, and seamless tool integration.                     3 :    OpenAI has introduced GPT-6 Astra, a powerful model engineered for business that features advanced reasoning capabilities. It offers enhanced performance in computer use, writing, and design judgment to streamline professional workflows.  ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "6a7afd3e-f5fb-4c76-88c5-181f635283c5",
+      "name": "Send a message",
+      "webhookId": "de2149b9-2411-4246-b3b1-a5878883b810",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cmK3BbZGxXjQkleW",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "d1daefc8-e3b3-4c06-939f-ead112f6b7e5",
+  "activeVersionId": null,
+  "versionCounter": 15,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-12T03:14:44.402Z",
+      "createdAt": "2026-09-12T03:14:44.402Z",
+      "role": "workflow:owner",
+      "workflowId": "BnjLPjbaqFLjTUPy",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "updatedAt": "2026-09-23T23:39:39.861Z",
+  "createdAt": "2026-09-23T23:39:25.084Z",
+  "id": "JvMAGoXm222ajTqZ",
+  "name": "My workflow 12",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bfd230f0-2a3e-4b32-9a20-206e51bdfa52",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "chatId": "@enkaidd44cbot"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "5abdd879-1a32-4b61-9c18-a0b1b0f3f22f",
+      "name": "Get a chat",
+      "webhookId": "eadf48f3-3b25-4d13-a00f-004f8d261618",
+      "credentials": {
+        "telegramApi": {
+          "id": "qkBRG9tMzZrlVaid",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Get a chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "6aac6c0e-17c3-46b3-a555-73504cdc18e1",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-23T23:39:25.086Z",
+      "createdAt": "2026-09-23T23:39:25.086Z",
+      "role": "workflow:owner",
+      "workflowId": "JvMAGoXm222ajTqZ",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

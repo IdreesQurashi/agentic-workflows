@@ -1,0 +1,87 @@
+{
+  "updatedAt": "2026-09-23T03:20:15.834Z",
+  "createdAt": "2026-09-23T03:13:14.763Z",
+  "id": "haJIwtTbGVaWyHw5",
+  "name": "Forced Failure Simulation Worker",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b8e92f11-9a41-4820-a619-d6e8b1b0e222",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "throw new Error(\"Simulated Critical Database Timeout: Connection refused on postgresql://db.internal:5432\");"
+      },
+      "id": "c9f03a22-ab52-4931-b720-e7f9c2c1f333",
+      "name": "Force Error Node",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        64,
+        304
+      ]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Force Error Node",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "2de7171a-2b65-4807-b0de-0068f4926f76",
+  "activeVersionId": null,
+  "versionCounter": 2,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-23T03:13:14.765Z",
+      "createdAt": "2026-09-23T03:13:14.765Z",
+      "role": "workflow:owner",
+      "workflowId": "haJIwtTbGVaWyHw5",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

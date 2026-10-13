@@ -1,0 +1,301 @@
+{
+  "run_timestamp": "20260925_043055",
+  "webhook_url": "https://n8n.srv1041226.hstgr.cloud/webhook/router-v1",
+  "total_fixtures": 21,
+  "results": [
+    {
+      "index": 1,
+      "unit_id": "a1b2c3d4-0001-4aaa-8000-000000000001",
+      "label": "C1-01 clean auto lane high confidence",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1737.7,
+      "sent_at": "2026-09-25T04:29:42.178311Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 2,
+      "unit_id": "a1b2c3d4-0002-4aaa-8000-000000000002",
+      "label": "C1-02 clean auto lane near-ceiling confidence",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1437.2,
+      "sent_at": "2026-09-25T04:29:45.916197Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 3,
+      "unit_id": "a1b2c3d4-0003-4aaa-8000-000000000003",
+      "label": "C1-03 clean auto lane minimum auto threshold",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1811.0,
+      "sent_at": "2026-09-25T04:29:49.353877Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 4,
+      "unit_id": "a1b2c3d4-0004-4aaa-8000-000000000004",
+      "label": "C1-04 clean auto lane multi-sentence input",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1593.7,
+      "sent_at": "2026-09-25T04:29:53.165316Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 5,
+      "unit_id": "a1b2c3d4-0005-4aaa-8000-000000000005",
+      "label": "C2-01 clean verify lane mid confidence",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1336.4,
+      "sent_at": "2026-09-25T04:29:56.759396Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 6,
+      "unit_id": "a1b2c3d4-0006-4aaa-8000-000000000006",
+      "label": "C2-02 clean verify lane lower mid confidence",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1863.2,
+      "sent_at": "2026-09-25T04:30:00.096383Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 7,
+      "unit_id": "a1b2c3d4-0007-4aaa-8000-000000000007",
+      "label": "C2-03 clean verify lane confidence near verify ceiling",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1227.9,
+      "sent_at": "2026-09-25T04:30:03.959961Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 8,
+      "unit_id": "a1b2c3d4-0008-4aaa-8000-000000000008",
+      "label": "C3-01 clean human lane low confidence",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1575.2,
+      "sent_at": "2026-09-25T04:30:07.188399Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 9,
+      "unit_id": "a1b2c3d4-0009-4aaa-8000-000000000009",
+      "label": "C3-02 clean human lane very low confidence",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1667.9,
+      "sent_at": "2026-09-25T04:30:10.763987Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 10,
+      "unit_id": "a1b2c3d4-0010-4aaa-8000-000000000010",
+      "label": "C3-03 clean human lane near-floor confidence",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1658.8,
+      "sent_at": "2026-09-25T04:30:14.432468Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 11,
+      "unit_id": "a1b2c3d4-0011-4aaa-8000-000000000011",
+      "label": "C4-01 boundary confidence exactly 0.85 must land auto not verify",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1739.3,
+      "sent_at": "2026-09-25T04:30:18.091774Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 12,
+      "unit_id": "a1b2c3d4-0012-4aaa-8000-000000000012",
+      "label": "C4-02 boundary confidence exactly 0.50 must land verify not human",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1376.3,
+      "sent_at": "2026-09-25T04:30:21.831735Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 13,
+      "unit_id": "a1b2c3d4-0013-4aaa-8000-000000000013",
+      "label": "C4-03 boundary confidence 0.4999 must land human not verify",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1108.9,
+      "sent_at": "2026-09-25T04:30:25.208506Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 14,
+      "unit_id": "a1b2c3d4-0014-4aaa-8000-000000000014",
+      "label": "C5-01 HARNESS_SPECIAL_CASE post raw broken string not json",
+      "malformed": true,
+      "http_status": 404,
+      "latency_ms": 1753.2,
+      "sent_at": "2026-09-25T04:30:28.317873Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 15,
+      "unit_id": "NO_ID",
+      "label": "C5-02 missing required field unit_id absent",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1572.5,
+      "sent_at": "2026-09-25T04:30:32.074726Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 16,
+      "unit_id": "a1b2c3d4-0015-4aaa-8000-000000000015",
+      "label": "C5-03 wrong type confidence string instead of float",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1258.9,
+      "sent_at": "2026-09-25T04:30:35.647728Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 17,
+      "unit_id": "a1b2c3d4-0016-4aaa-8000-000000000016",
+      "label": "C6-01 oversized text >15000 chars dead-letter lane expected",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1517.8,
+      "sent_at": "2026-09-25T04:30:38.907358Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 18,
+      "unit_id": "a1b2c3d4-0017-4aaa-8000-000000000017",
+      "label": "C7-01 empty text string valid structure otherwise",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1600.3,
+      "sent_at": "2026-09-25T04:30:42.425615Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 19,
+      "unit_id": "a1b2c3d4-0018-4aaa-8000-000000000018",
+      "label": "C7-02 whitespace-only text",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1381.8,
+      "sent_at": "2026-09-25T04:30:46.026168Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 20,
+      "unit_id": "a1b2c3d4-d00e-4aaa-8000-000000000099",
+      "label": "C8-01 FIRST send of duplicate ID expect one ledger row created",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 2377.0,
+      "sent_at": "2026-09-25T04:30:49.408917Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    },
+    {
+      "index": 21,
+      "unit_id": "a1b2c3d4-d00e-4aaa-8000-000000000099",
+      "label": "C8-02 SECOND send of same duplicate ID expect NO new ledger row dedup guard fires",
+      "malformed": false,
+      "http_status": 404,
+      "latency_ms": 1875.0,
+      "sent_at": "2026-09-25T04:30:53.786318Z",
+      "response": {
+        "code": 404,
+        "message": "The requested webhook \"POST router-v1\" is not registered.",
+        "hint": "The workflow must be active for a production URL to run successfully. You can activate the workflow using the toggle in the top-right of the editor. Note that unlike test URL calls, production URL calls aren't shown on the canvas (only in the executions list)"
+      }
+    }
+  ]
+}

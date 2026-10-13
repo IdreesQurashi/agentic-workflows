@@ -1,0 +1,678 @@
+{
+  "id": "rIqCVHyxpsogS2mW",
+  "name": "n8n Daily Instance Health Monitor",
+  "description": null,
+  "active": true,
+  "activeVersionId": "7a4c9589-7e3d-4c27-af8d-9df59587f10f",
+  "createdAt": "2026-09-23T03:13:06.249Z",
+  "updatedAt": "2026-09-23T03:28:10.615Z",
+  "isArchived": false,
+  "versionId": "7a4c9589-7e3d-4c27-af8d-9df59587f10f",
+  "versionCounter": 6,
+  "sourceWorkflowId": null,
+  "triggerCount": 1,
+  "nodes": [
+    {
+      "id": "b3f86e9d-1941-4c6e-8219-c6e7a2b0e111",
+      "name": "Schedule Daily 08:00 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -600,
+        300
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "d4c72a81-e872-4b20-80d4-1a35f3d4c222",
+      "name": "Set Config & 24h Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -380,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst past24h = new Date(now.getTime() - (24 * 60 * 60 * 1000));\n\nreturn [{\n  json: {\n    startedAfter: past24h.toISOString(),\n    startedBefore: now.toISOString(),\n    baseUrl: 'http://localhost:5678',\n    externalBaseUrl: 'http://localhost:5678',\n    recipientEmail: 'idreesqurashi.ai@gmail.com'\n  }\n}];"
+      }
+    },
+    {
+      "id": "e5b83b92-f983-4c31-91e5-2b46e4e5d333",
+      "name": "Fetch Workflows",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        300
+      ],
+      "parameters": {
+        "url": "={{ $json.baseUrl }}/api/v1/workflows",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "YOUR_N8N_API_KEY_PLACEHOLDER"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "f6c94c03-a094-4d42-a2f6-3c57f5f6e444",
+      "name": "Fetch 24h Executions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        60,
+        300
+      ],
+      "parameters": {
+        "url": "={{ $('Set Config & 24h Window').first().json.baseUrl }}/api/v1/executions",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "startedAfter",
+              "value": "={{ $('Set Config & 24h Window').first().json.startedAfter }}"
+            },
+            {
+              "name": "includeData",
+              "value": "false"
+            },
+            {
+              "name": "limit",
+              "value": "250"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "YOUR_N8N_API_KEY_PLACEHOLDER"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a7d05d14-b105-4e53-b3a7-4d68a6a7f555",
+      "name": "Aggregate Metrics & Format HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const config = $('Set Config & 24h Window').first().json;\nconst workflowsData = $('Fetch Workflows').first().json.data || [];\nconst executionsData = $('Fetch 24h Executions').first().json.data || [];\n\nconst totalWorkflows = workflowsData.length;\nconst activeWorkflows = workflowsData.filter(w => w.active === true);\nconst inactiveWorkflows = workflowsData.filter(w => !w.active);\n\nconst workflowMap = {};\nworkflowsData.forEach(w => {\n  workflowMap[w.id] = w.name;\n});\n\nconst totalRecordedExecutions = executionsData.length;\nconst failedExecutions = executionsData.filter(e => e.status === 'error' || e.finished === false);\nconst successfulExecutions = executionsData.filter(e => e.status === 'success');\n\nconst failedCount = failedExecutions.length;\nconst successCount = successfulExecutions.length;\nconst successRate = totalRecordedExecutions > 0 \n  ? ((successCount / totalRecordedExecutions) * 100).toFixed(1) \n  : '100.0';\n\nconst failuresSummary = failedExecutions.slice(0, 10).map(e => {\n  const wfName = workflowMap[e.workflowId] || 'Unknown Workflow';\n  const execUrl = `${config.externalBaseUrl}/workflow/${e.workflowId}/executions/${e.id}`;\n  return {\n    id: e.id,\n    workflowId: e.workflowId,\n    workflowName: wfName,\n    startedAt: e.startedAt,\n    status: e.status,\n    executionUrl: execUrl\n  };\n});\n\nconst isUrgent = failedCount > 0;\nconst statusBadge = isUrgent ? 'CRITICAL - ACTION REQUIRED' : 'HEALTHY - ALL SYSTEMS GO';\nconst statusColor = isUrgent ? '#dc2626' : '#16a34a';\nconst statusBg = isUrgent ? '#fee2e2' : '#dcfce7';\n\nlet failureRowsHtml = '';\nif (failuresSummary.length > 0) {\n  failureRowsHtml = failuresSummary.map(f => `\n    <tr style=\"border-bottom: 1px solid #e5e7eb;\">\n      <td style=\"padding: 10px; font-weight: 600; color: #1f2937;\">${f.workflowName}</td>\n      <td style=\"padding: 10px; color: #4b5563;\">#${f.id}</td>\n      <td style=\"padding: 10px; color: #6b7280; font-size: 13px;\">${new Date(f.startedAt).toLocaleString()}</td>\n      <td style=\"padding: 10px; text-align: right;\">\n        <a href=\"${f.executionUrl}\" style=\"background-color: #dc2626; color: #ffffff; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: 500;\" target=\"_blank\">Inspect Failure</a>\n      </td>\n    </tr>\n  `).join('');\n} else {\n  failureRowsHtml = '<tr><td colspan=\"4\" style=\"padding: 16px; text-align: center; color: #16a34a; font-weight: 500;\">Zero failures recorded in the past 24 hours.</td></tr>';\n}\n\nconst activeWfListHtml = activeWorkflows.slice(0, 15).map(w => `\n  <li style=\"padding: 4px 0; color: #374151; font-size: 14px;\">\n    <strong>${w.name}</strong> <span style=\"color: #9ca3af; font-size: 12px;\">(${w.id})</span>\n  </li>\n`).join('');\n\nconst htmlEmail = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <title>n8n Instance Health Report</title>\n</head>\n<body style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; color: #1f2937;\">\n  <div style=\"max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1);\">\n    \n    <div style=\"background-color: ${statusColor}; padding: 20px 24px; color: #ffffff;\">\n      <h1 style=\"margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.025em;\">\n        ${isUrgent ? '\ud83d\udea8 URGENT: n8n Instance Health Alert' : '\u2705 n8n Instance Daily Health Report'}\n      </h1>\n      <p style=\"margin: 6px 0 0 0; font-size: 14px; opacity: 0.9;\">\n        Reporting Window: Last 24 Hours &bull; Audited on ${new Date().toUTCString()}\n      </p>\n    </div>\n\n    <div style=\"padding: 24px;\">\n      <div style=\"display: inline-block; padding: 6px 12px; border-radius: 9999px; background-color: ${statusBg}; color: ${statusColor}; font-weight: 700; font-size: 13px; text-transform: uppercase; margin-bottom: 20px;\">\n        ${statusBadge}\n      </div>\n\n      <div style=\"display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;\">\n        <div style=\"background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; text-align: center;\">\n          <div style=\"font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 600;\">Active Flows</div>\n          <div style=\"font-size: 22px; font-weight: 700; color: #111827; margin-top: 4px;\">${activeWorkflows.length}</div>\n          <div style=\"font-size: 11px; color: #9ca3af;\">of ${totalWorkflows} total</div>\n        </div>\n        <div style=\"background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; text-align: center;\">\n          <div style=\"font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 600;\">Recorded Runs</div>\n          <div style=\"font-size: 22px; font-weight: 700; color: #111827; margin-top: 4px;\">${totalRecordedExecutions}</div>\n          <div style=\"font-size: 11px; color: #9ca3af;\">past 24h</div>\n        </div>\n        <div style=\"background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; text-align: center;\">\n          <div style=\"font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 600;\">Success Rate</div>\n          <div style=\"font-size: 22px; font-weight: 700; color: #16a34a; margin-top: 4px;\">${successRate}%</div>\n          <div style=\"font-size: 11px; color: #9ca3af;\">${successCount} passed</div>\n        </div>\n        <div style=\"background: ${isUrgent ? '#fee2e2' : '#f9fafb'}; border: 1px solid ${isUrgent ? '#fca5a5' : '#e5e7eb'}; border-radius: 6px; padding: 12px; text-align: center;\">\n          <div style=\"font-size: 11px; text-transform: uppercase; color: ${isUrgent ? '#991b1b' : '#6b7280'}; font-weight: 600;\">Failed Runs</div>\n          <div style=\"font-size: 22px; font-weight: 700; color: ${isUrgent ? '#dc2626' : '#111827'}; margin-top: 4px;\">${failedCount}</div>\n          <div style=\"font-size: 11px; color: ${isUrgent ? '#b91c1c' : '#9ca3af'};\">urgent review</div>\n        </div>\n      </div>\n\n      <h2 style=\"font-size: 16px; font-weight: 700; margin: 24px 0 12px 0; border-bottom: 2px solid #f3f4f6; padding-bottom: 6px;\">\n        ${isUrgent ? '\u26a0\ufe0f Recent Failed Executions (Top ' + failuresSummary.length + ')' : 'Execution Health Status'}\n      </h2>\n      <table style=\"width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 24px;\">\n        <thead>\n          <tr style=\"background-color: #f9fafb; text-align: left; color: #6b7280; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #e5e7eb;\">\n            <th style=\"padding: 10px;\">Workflow</th>\n            <th style=\"padding: 10px;\">Exec ID</th>\n            <th style=\"padding: 10px;\">Timestamp</th>\n            <th style=\"padding: 10px; text-align: right;\">Action</th>\n          </tr>\n        </thead>\n        <tbody>\n          ${failureRowsHtml}\n        </tbody>\n      </table>\n\n      <h2 style=\"font-size: 16px; font-weight: 700; margin: 24px 0 12px 0; border-bottom: 2px solid #f3f4f6; padding-bottom: 6px;\">\n        Active Production Workflows (${activeWorkflows.length})\n      </h2>\n      <ul style=\"margin: 0; padding-left: 20px; line-height: 1.6;\">\n        ${activeWorkflows.length > 0 ? activeWfListHtml : '<li style=\"color: #6b7280;\">No workflows currently active.</li>'}\n      </ul>\n    </div>\n\n    <div style=\"background: #f9fafb; border-top: 1px solid #e5e7eb; padding: 14px 24px; font-size: 12px; color: #6b7280; text-align: center;\">\n      Generated autonomously by n8n Health Monitor &bull; Instance: ${config.baseUrl}\n    </div>\n  </div>\n</body>\n</html>\n`;\n\nconst subject = isUrgent\n  ? `\ud83d\udea8 URGENT: [n8n Alert] ${failedCount} Failed Executions Detected in Last 24h`\n  : `\u2705 [n8n Report] All Systems Healthy (${activeWorkflows.length} Active Workflows)`;\n\nreturn [{\n  json: {\n    isUrgent,\n    failedCount,\n    successCount,\n    totalRecordedExecutions,\n    activeWorkflowsCount: activeWorkflows.length,\n    totalWorkflowsCount: totalWorkflows,\n    subject,\n    htmlEmail,\n    recipientEmail: config.recipientEmail\n  }\n}];"
+      }
+    },
+    {
+      "id": "18e16e25-c216-4f64-94b8-5e79b7b8a666",
+      "name": "Check If Failures Exist",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        500,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c609c951-87dc-4be4-a828-d102e3b2b918",
+              "leftValue": "={{ $json.failedCount }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "29f27f36-d327-4a75-a5c9-6f8ac8c9b777",
+      "name": "Send Urgent Failure Alert",
+      "webhookId": "91b825a4-cfe3-4ac4-ae91-2126b8cf53f6",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        200
+      ],
+      "parameters": {
+        "sendTo": "={{ $json.recipientEmail }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.htmlEmail }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cmK3BbZGxXjQkleW",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "id": "3a038a47-e438-4b86-b6da-7a9bd9dac888",
+      "name": "Send Clean Health Digest",
+      "webhookId": "21bd430f-242e-4e6e-aa44-fe551f84f31e",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        400
+      ],
+      "parameters": {
+        "sendTo": "={{ $json.recipientEmail }}",
+        "subject": "={{ $json.subject }}",
+        "emailType": "html",
+        "message": "={{ $json.htmlEmail }}",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "cmK3BbZGxXjQkleW",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "id": "b1c2d3e4-1111-4444-8888-000000000001",
+      "name": "Filter Method 1: Production Triggers Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        140
+      ],
+      "parameters": {
+        "jsCode": "// METHOD 1: Exclude manual developer canvas runs (mode !== 'manual')\n// Only monitor real scheduled triggers, webhooks, and sub-workflow executions\nconst rawExecutions = $('Fetch 24h Executions').first().json.data || [];\nconst prodExecutions = rawExecutions.filter(e => e.mode !== 'manual');\n\nreturn [{\n  json: {\n    filterApplied: \"Method 1: Production Triggers Only (mode != manual)\",\n    totalRawCount: rawExecutions.length,\n    productionCount: prodExecutions.length,\n    manualTestingCount: rawExecutions.length - prodExecutions.length,\n    filteredExecutions: prodExecutions\n  }\n}];"
+      }
+    },
+    {
+      "id": "b1c2d3e4-2222-4444-8888-000000000002",
+      "name": "Filter Method 2: Active Workflows Only",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        280,
+        460
+      ],
+      "parameters": {
+        "jsCode": "// METHOD 2: Scope strictly to workflows that are ACTIVE in production\n// Draft / scratchpad workflows (active: false) are filtered out\nconst workflowsData = $('Fetch Workflows').first().json.data || [];\nconst rawExecutions = $('Fetch 24h Executions').first().json.data || [];\n\nconst activeWorkflowIds = new Set(workflowsData.filter(w => w.active === true).map(w => w.id));\nconst activeWorkflowExecutions = rawExecutions.filter(e => activeWorkflowIds.has(e.workflowId));\n\nreturn [{\n  json: {\n    filterApplied: \"Method 2: Active Workflows Only (active == true)\",\n    totalWorkflows: workflowsData.length,\n    activeWorkflowsCount: activeWorkflowIds.size,\n    totalRawExecutions: rawExecutions.length,\n    activeWorkflowExecutionsCount: activeWorkflowExecutions.length,\n    filteredExecutions: activeWorkflowExecutions\n  }\n}];"
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Daily 08:00 AM": {
+      "main": [
+        [
+          {
+            "node": "Set Config & 24h Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Config & 24h Window": {
+      "main": [
+        [
+          {
+            "node": "Fetch Workflows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Workflows": {
+      "main": [
+        [
+          {
+            "node": "Fetch 24h Executions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch 24h Executions": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Metrics & Format HTML",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter Method 1: Production Triggers Only",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Filter Method 2: Active Workflows Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Metrics & Format HTML": {
+      "main": [
+        [
+          {
+            "node": "Check If Failures Exist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check If Failures Exist": {
+      "main": [
+        [
+          {
+            "node": "Send Urgent Failure Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Clean Health Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "nodeGroups": [],
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Schedule Daily 08:00 AM": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "pinData": null,
+  "meta": null,
+  "tags": [],
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "rIqCVHyxpsogS2mW",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "updatedAt": "2026-09-09T23:49:47.008Z"
+      },
+      "createdAt": "2026-09-23T03:13:06.255Z",
+      "updatedAt": "2026-09-23T03:13:06.255Z"
+    }
+  ],
+  "activeVersion": {
+    "versionId": "7a4c9589-7e3d-4c27-af8d-9df59587f10f",
+    "workflowId": "rIqCVHyxpsogS2mW",
+    "nodes": [
+      {
+        "id": "b3f86e9d-1941-4c6e-8219-c6e7a2b0e111",
+        "name": "Schedule Daily 08:00 AM",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -600,
+          300
+        ],
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "cronExpression",
+                "expression": "0 8 * * *"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "id": "d4c72a81-e872-4b20-80d4-1a35f3d4c222",
+        "name": "Set Config & 24h Window",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -380,
+          300
+        ],
+        "parameters": {
+          "jsCode": "const now = new Date();\nconst past24h = new Date(now.getTime() - (24 * 60 * 60 * 1000));\n\nreturn [{\n  json: {\n    startedAfter: past24h.toISOString(),\n    startedBefore: now.toISOString(),\n    baseUrl: 'http://localhost:5678',\n    externalBaseUrl: 'http://localhost:5678',\n    recipientEmail: 'idreesqurashi.ai@gmail.com'\n  }\n}];"
+        }
+      },
+      {
+        "id": "e5b83b92-f983-4c31-91e5-2b46e4e5d333",
+        "name": "Fetch Workflows",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -160,
+          300
+        ],
+        "parameters": {
+          "url": "={{ $json.baseUrl }}/api/v1/workflows",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "X-N8N-API-KEY",
+                "value": "YOUR_N8N_API_KEY_PLACEHOLDER"
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "f6c94c03-a094-4d42-a2f6-3c57f5f6e444",
+        "name": "Fetch 24h Executions",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          60,
+          300
+        ],
+        "parameters": {
+          "url": "={{ $('Set Config & 24h Window').first().json.baseUrl }}/api/v1/executions",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "startedAfter",
+                "value": "={{ $('Set Config & 24h Window').first().json.startedAfter }}"
+              },
+              {
+                "name": "includeData",
+                "value": "false"
+              },
+              {
+                "name": "limit",
+                "value": "250"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "X-N8N-API-KEY",
+                "value": "YOUR_N8N_API_KEY_PLACEHOLDER"
+              }
+            ]
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "a7d05d14-b105-4e53-b3a7-4d68a6a7f555",
+        "name": "Aggregate Metrics & Format HTML",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          280,
+          300
+        ],
+        "parameters": {
+          "jsCode": "const config = $('Set Config & 24h Window').first().json;\nconst workflowsData = $('Fetch Workflows').first().json.data || [];\nconst executionsData = $('Fetch 24h Executions').first().json.data || [];\n\nconst totalWorkflows = workflowsData.length;\nconst activeWorkflows = workflowsData.filter(w => w.active === true);\nconst inactiveWorkflows = workflowsData.filter(w => !w.active);\n\nconst workflowMap = {};\nworkflowsData.forEach(w => {\n  workflowMap[w.id] = w.name;\n});\n\nconst totalRecordedExecutions = executionsData.length;\nconst failedExecutions = executionsData.filter(e => e.status === 'error' || e.finished === false);\nconst successfulExecutions = executionsData.filter(e => e.status === 'success');\n\nconst failedCount = failedExecutions.length;\nconst successCount = successfulExecutions.length;\nconst successRate = totalRecordedExecutions > 0 \n  ? ((successCount / totalRecordedExecutions) * 100).toFixed(1) \n  : '100.0';\n\nconst failuresSummary = failedExecutions.slice(0, 10).map(e => {\n  const wfName = workflowMap[e.workflowId] || 'Unknown Workflow';\n  const execUrl = `${config.externalBaseUrl}/workflow/${e.workflowId}/executions/${e.id}`;\n  return {\n    id: e.id,\n    workflowId: e.workflowId,\n    workflowName: wfName,\n    startedAt: e.startedAt,\n    status: e.status,\n    executionUrl: execUrl\n  };\n});\n\nconst isUrgent = failedCount > 0;\nconst statusBadge = isUrgent ? 'CRITICAL - ACTION REQUIRED' : 'HEALTHY - ALL SYSTEMS GO';\nconst statusColor = isUrgent ? '#dc2626' : '#16a34a';\nconst statusBg = isUrgent ? '#fee2e2' : '#dcfce7';\n\nlet failureRowsHtml = '';\nif (failuresSummary.length > 0) {\n  failureRowsHtml = failuresSummary.map(f => `\n    <tr style=\"border-bottom: 1px solid #e5e7eb;\">\n      <td style=\"padding: 10px; font-weight: 600; color: #1f2937;\">${f.workflowName}</td>\n      <td style=\"padding: 10px; color: #4b5563;\">#${f.id}</td>\n      <td style=\"padding: 10px; color: #6b7280; font-size: 13px;\">${new Date(f.startedAt).toLocaleString()}</td>\n      <td style=\"padding: 10px; text-align: right;\">\n        <a href=\"${f.executionUrl}\" style=\"background-color: #dc2626; color: #ffffff; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: 500;\" target=\"_blank\">Inspect Failure</a>\n      </td>\n    </tr>\n  `).join('');\n} else {\n  failureRowsHtml = '<tr><td colspan=\"4\" style=\"padding: 16px; text-align: center; color: #16a34a; font-weight: 500;\">Zero failures recorded in the past 24 hours.</td></tr>';\n}\n\nconst activeWfListHtml = activeWorkflows.slice(0, 15).map(w => `\n  <li style=\"padding: 4px 0; color: #374151; font-size: 14px;\">\n    <strong>${w.name}</strong> <span style=\"color: #9ca3af; font-size: 12px;\">(${w.id})</span>\n  </li>\n`).join('');\n\nconst htmlEmail = `\n<!DOCTYPE html>\n<html>\n<head>\n  <meta charset=\"utf-8\">\n  <title>n8n Instance Health Report</title>\n</head>\n<body style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; color: #1f2937;\">\n  <div style=\"max-width: 680px; margin: 0 auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1);\">\n    \n    <div style=\"background-color: ${statusColor}; padding: 20px 24px; color: #ffffff;\">\n      <h1 style=\"margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.025em;\">\n        ${isUrgent ? '\ud83d\udea8 URGENT: n8n Instance Health Alert' : '\u2705 n8n Instance Daily Health Report'}\n      </h1>\n      <p style=\"margin: 6px 0 0 0; font-size: 14px; opacity: 0.9;\">\n        Reporting Window: Last 24 Hours &bull; Audited on ${new Date().toUTCString()}\n      </p>\n    </div>\n\n    <div style=\"padding: 24px;\">\n      <div style=\"display: inline-block; padding: 6px 12px; border-radius: 9999px; background-color: ${statusBg}; color: ${statusColor}; font-weight: 700; font-size: 13px; text-transform: uppercase; margin-bottom: 20px;\">\n        ${statusBadge}\n      </div>\n\n      <div style=\"display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px;\">\n        <div style=\"background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; text-align: center;\">\n          <div style=\"font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 600;\">Active Flows</div>\n          <div style=\"font-size: 22px; font-weight: 700; color: #111827; margin-top: 4px;\">${activeWorkflows.length}</div>\n          <div style=\"font-size: 11px; color: #9ca3af;\">of ${totalWorkflows} total</div>\n        </div>\n        <div style=\"background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; text-align: center;\">\n          <div style=\"font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 600;\">Recorded Runs</div>\n          <div style=\"font-size: 22px; font-weight: 700; color: #111827; margin-top: 4px;\">${totalRecordedExecutions}</div>\n          <div style=\"font-size: 11px; color: #9ca3af;\">past 24h</div>\n        </div>\n        <div style=\"background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px; text-align: center;\">\n          <div style=\"font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 600;\">Success Rate</div>\n          <div style=\"font-size: 22px; font-weight: 700; color: #16a34a; margin-top: 4px;\">${successRate}%</div>\n          <div style=\"font-size: 11px; color: #9ca3af;\">${successCount} passed</div>\n        </div>\n        <div style=\"background: ${isUrgent ? '#fee2e2' : '#f9fafb'}; border: 1px solid ${isUrgent ? '#fca5a5' : '#e5e7eb'}; border-radius: 6px; padding: 12px; text-align: center;\">\n          <div style=\"font-size: 11px; text-transform: uppercase; color: ${isUrgent ? '#991b1b' : '#6b7280'}; font-weight: 600;\">Failed Runs</div>\n          <div style=\"font-size: 22px; font-weight: 700; color: ${isUrgent ? '#dc2626' : '#111827'}; margin-top: 4px;\">${failedCount}</div>\n          <div style=\"font-size: 11px; color: ${isUrgent ? '#b91c1c' : '#9ca3af'};\">urgent review</div>\n        </div>\n      </div>\n\n      <h2 style=\"font-size: 16px; font-weight: 700; margin: 24px 0 12px 0; border-bottom: 2px solid #f3f4f6; padding-bottom: 6px;\">\n        ${isUrgent ? '\u26a0\ufe0f Recent Failed Executions (Top ' + failuresSummary.length + ')' : 'Execution Health Status'}\n      </h2>\n      <table style=\"width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 24px;\">\n        <thead>\n          <tr style=\"background-color: #f9fafb; text-align: left; color: #6b7280; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #e5e7eb;\">\n            <th style=\"padding: 10px;\">Workflow</th>\n            <th style=\"padding: 10px;\">Exec ID</th>\n            <th style=\"padding: 10px;\">Timestamp</th>\n            <th style=\"padding: 10px; text-align: right;\">Action</th>\n          </tr>\n        </thead>\n        <tbody>\n          ${failureRowsHtml}\n        </tbody>\n      </table>\n\n      <h2 style=\"font-size: 16px; font-weight: 700; margin: 24px 0 12px 0; border-bottom: 2px solid #f3f4f6; padding-bottom: 6px;\">\n        Active Production Workflows (${activeWorkflows.length})\n      </h2>\n      <ul style=\"margin: 0; padding-left: 20px; line-height: 1.6;\">\n        ${activeWorkflows.length > 0 ? activeWfListHtml : '<li style=\"color: #6b7280;\">No workflows currently active.</li>'}\n      </ul>\n    </div>\n\n    <div style=\"background: #f9fafb; border-top: 1px solid #e5e7eb; padding: 14px 24px; font-size: 12px; color: #6b7280; text-align: center;\">\n      Generated autonomously by n8n Health Monitor &bull; Instance: ${config.baseUrl}\n    </div>\n  </div>\n</body>\n</html>\n`;\n\nconst subject = isUrgent\n  ? `\ud83d\udea8 URGENT: [n8n Alert] ${failedCount} Failed Executions Detected in Last 24h`\n  : `\u2705 [n8n Report] All Systems Healthy (${activeWorkflows.length} Active Workflows)`;\n\nreturn [{\n  json: {\n    isUrgent,\n    failedCount,\n    successCount,\n    totalRecordedExecutions,\n    activeWorkflowsCount: activeWorkflows.length,\n    totalWorkflowsCount: totalWorkflows,\n    subject,\n    htmlEmail,\n    recipientEmail: config.recipientEmail\n  }\n}];"
+        }
+      },
+      {
+        "id": "18e16e25-c216-4f64-94b8-5e79b7b8a666",
+        "name": "Check If Failures Exist",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          500,
+          300
+        ],
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c609c951-87dc-4be4-a828-d102e3b2b918",
+                "leftValue": "={{ $json.failedCount }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        }
+      },
+      {
+        "id": "29f27f36-d327-4a75-a5c9-6f8ac8c9b777",
+        "name": "Send Urgent Failure Alert",
+        "webhookId": "91b825a4-cfe3-4ac4-ae91-2126b8cf53f6",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          720,
+          200
+        ],
+        "parameters": {
+          "sendTo": "={{ $json.recipientEmail }}",
+          "subject": "={{ $json.subject }}",
+          "emailType": "html",
+          "message": "={{ $json.htmlEmail }}",
+          "options": {}
+        },
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "cmK3BbZGxXjQkleW",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "id": "3a038a47-e438-4b86-b6da-7a9bd9dac888",
+        "name": "Send Clean Health Digest",
+        "webhookId": "21bd430f-242e-4e6e-aa44-fe551f84f31e",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          720,
+          400
+        ],
+        "parameters": {
+          "sendTo": "={{ $json.recipientEmail }}",
+          "subject": "={{ $json.subject }}",
+          "emailType": "html",
+          "message": "={{ $json.htmlEmail }}",
+          "options": {}
+        },
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "cmK3BbZGxXjQkleW",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "id": "b1c2d3e4-1111-4444-8888-000000000001",
+        "name": "Filter Method 1: Production Triggers Only",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          280,
+          140
+        ],
+        "parameters": {
+          "jsCode": "// METHOD 1: Exclude manual developer canvas runs (mode !== 'manual')\n// Only monitor real scheduled triggers, webhooks, and sub-workflow executions\nconst rawExecutions = $('Fetch 24h Executions').first().json.data || [];\nconst prodExecutions = rawExecutions.filter(e => e.mode !== 'manual');\n\nreturn [{\n  json: {\n    filterApplied: \"Method 1: Production Triggers Only (mode != manual)\",\n    totalRawCount: rawExecutions.length,\n    productionCount: prodExecutions.length,\n    manualTestingCount: rawExecutions.length - prodExecutions.length,\n    filteredExecutions: prodExecutions\n  }\n}];"
+        }
+      },
+      {
+        "id": "b1c2d3e4-2222-4444-8888-000000000002",
+        "name": "Filter Method 2: Active Workflows Only",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          280,
+          460
+        ],
+        "parameters": {
+          "jsCode": "// METHOD 2: Scope strictly to workflows that are ACTIVE in production\n// Draft / scratchpad workflows (active: false) are filtered out\nconst workflowsData = $('Fetch Workflows').first().json.data || [];\nconst rawExecutions = $('Fetch 24h Executions').first().json.data || [];\n\nconst activeWorkflowIds = new Set(workflowsData.filter(w => w.active === true).map(w => w.id));\nconst activeWorkflowExecutions = rawExecutions.filter(e => activeWorkflowIds.has(e.workflowId));\n\nreturn [{\n  json: {\n    filterApplied: \"Method 2: Active Workflows Only (active == true)\",\n    totalWorkflows: workflowsData.length,\n    activeWorkflowsCount: activeWorkflowIds.size,\n    totalRawExecutions: rawExecutions.length,\n    activeWorkflowExecutionsCount: activeWorkflowExecutions.length,\n    filteredExecutions: activeWorkflowExecutions\n  }\n}];"
+        }
+      }
+    ],
+    "connections": {
+      "Schedule Daily 08:00 AM": {
+        "main": [
+          [
+            {
+              "node": "Set Config & 24h Window",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Config & 24h Window": {
+        "main": [
+          [
+            {
+              "node": "Fetch Workflows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch Workflows": {
+        "main": [
+          [
+            {
+              "node": "Fetch 24h Executions",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Fetch 24h Executions": {
+        "main": [
+          [
+            {
+              "node": "Aggregate Metrics & Format HTML",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Filter Method 1: Production Triggers Only",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Filter Method 2: Active Workflows Only",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Aggregate Metrics & Format HTML": {
+        "main": [
+          [
+            {
+              "node": "Check If Failures Exist",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check If Failures Exist": {
+        "main": [
+          [
+            {
+              "node": "Send Urgent Failure Alert",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send Clean Health Digest",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Idrees Qurashi",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "createdAt": "2026-09-23T03:28:10.617Z",
+    "updatedAt": "2026-09-23T03:28:10.617Z",
+    "workflowPublishHistory": [
+      {
+        "id": 24,
+        "workflowId": "rIqCVHyxpsogS2mW",
+        "versionId": "7a4c9589-7e3d-4c27-af8d-9df59587f10f",
+        "event": "activated",
+        "userId": "2b626098-c438-467e-8beb-c44bcf136da3",
+        "createdAt": "2026-09-23T03:28:10.738Z"
+      }
+    ]
+  }
+}

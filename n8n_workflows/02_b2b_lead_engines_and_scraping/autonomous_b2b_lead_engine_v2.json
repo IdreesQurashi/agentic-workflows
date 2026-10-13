@@ -1,0 +1,200 @@
+{
+  "updatedAt": "2026-09-10T00:23:30.747Z",
+  "createdAt": "2026-09-10T00:23:30.747Z",
+  "id": "X7iKfhG1xjSfARcr",
+  "name": "Autonomous B2B Lead Engine V2",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        200,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-incoming"
+      },
+      "id": "f5799c61-0929-465d-8491-38267342a9e8",
+      "webhookId": "8897a28c-9083-47d2-9a29-6ae2f8dccbf0"
+    },
+    {
+      "name": "Hunter.io Enrichment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        420,
+        300
+      ],
+      "parameters": {
+        "url": "=https://api.hunter.io/v2/domain-search?domain={{$json.body.domain}}&api_key=YOUR_HUNTER_API_KEY"
+      },
+      "id": "a333ec63-3b8c-43ba-8ae6-fc9765209354"
+    },
+    {
+      "name": "Email Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        640,
+        300
+      ],
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.data.emails.length > 0}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "82a1defd-b77b-4b2f-a5e3-64201c6d674d"
+    },
+    {
+      "name": "Gemini AI Brain",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        860,
+        160
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=YOUR_GEMINI_API_KEY_PLACEHOLDER",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "contents",
+              "value": "={{ [ { \"parts\": [ { \"text\": \"Write a strict, 2-sentence, hyper-personalized B2B icebreaker about this company based on their description: \" + ($json.data.organization || $json.data.domain) } ] } ] }}"
+            }
+          ]
+        }
+      },
+      "id": "b37cbc16-abb2-4b33-b077-a87f952be563"
+    },
+    {
+      "name": "Payload Formatting",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        160
+      ],
+      "parameters": {
+        "jsCode": "const hunterData = $node[\"Hunter.io Enrichment\"].json.data;\nconst webhookBody = $node[\"Webhook Trigger\"].json.body;\nconst targetEmail = hunterData.emails[0].value;\nlet icebreaker = \"\";\ntry {\n  icebreaker = $input.item.json.candidates[0].content.parts[0].text;\n} catch(e) {\n  icebreaker = \"I loved learning about what you are building.\";\n}\nreturn { email: targetEmail, name: webhookBody.name, domain: webhookBody.domain, icebreaker: icebreaker.trim() };"
+      },
+      "id": "4451e658-1a5a-4306-a303-12f0d4a56f85"
+    },
+    {
+      "name": "Telegram (Failure Alert)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        860,
+        480
+      ],
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=Lead failed to enrich: {{$node[\"Webhook Trigger\"].json[\"body\"][\"domain\"]}}"
+      },
+      "id": "bacc256e-b691-41d1-a18c-dba429822d4d",
+      "webhookId": "b7eede19-ab7b-4971-a6b9-fb0af100c0a6"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Hunter.io Enrichment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hunter.io Enrichment": {
+      "main": [
+        [
+          {
+            "node": "Email Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Exists?": {
+      "main": [
+        [
+          {
+            "node": "Gemini AI Brain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram (Failure Alert)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini AI Brain": {
+      "main": [
+        [
+          {
+            "node": "Payload Formatting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "errorWorkflow": "UEswT6JLi0ywRrtS"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": null,
+  "versionId": "7692930c-dbb4-48be-9563-d5a5c33e1620",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-10T00:23:30.753Z",
+      "createdAt": "2026-09-10T00:23:30.753Z",
+      "role": "workflow:owner",
+      "workflowId": "X7iKfhG1xjSfARcr",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

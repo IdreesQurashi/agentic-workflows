@@ -1,0 +1,94 @@
+{
+  "updatedAt": "2026-09-23T03:58:13.586Z",
+  "createdAt": "2026-09-23T03:58:13.586Z",
+  "id": "lq6DBicpqK0AlE9Y",
+  "name": "My workflow 10",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f70769c4-2338-46c7-a8b3-0f020fa1227f",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "operation": "get"
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a3f7e1b6-e768-4666-8d3e-06ac1adf2a77",
+      "name": "Get a channel",
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "3eeIB3DxkfBVLPku",
+          "name": "YouTube account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Get a channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "2649aed0-b8b8-4de8-8592-a4ab7cda157a",
+  "activeVersionId": null,
+  "versionCounter": 1,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-23T03:58:13.590Z",
+      "createdAt": "2026-09-23T03:58:13.590Z",
+      "role": "workflow:owner",
+      "workflowId": "lq6DBicpqK0AlE9Y",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

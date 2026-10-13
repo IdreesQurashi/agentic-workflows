@@ -1,0 +1,67 @@
+{
+  "updatedAt": "2026-09-19T14:34:25.000Z",
+  "createdAt": "2026-09-14T18:06:47.371Z",
+  "id": "yMl9TKQ9FUHkCIJV",
+  "name": "My workflow 6",
+  "description": null,
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "multipleMethods": true,
+        "path": "chal",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "3480ac5a-87e1-4ce6-b2f8-cf3d515630a2",
+      "name": "Webhook",
+      "webhookId": "instagram-dm-webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -320,
+        48
+      ]
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "539678ec-55a6-40b8-a92a-5f770597b04b",
+  "activeVersionId": null,
+  "versionCounter": 16,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-14T18:06:47.377Z",
+      "createdAt": "2026-09-14T18:06:47.377Z",
+      "role": "workflow:owner",
+      "workflowId": "yMl9TKQ9FUHkCIJV",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

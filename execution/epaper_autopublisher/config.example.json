@@ -1,0 +1,36 @@
+{
+  "gmail": {
+    "imap_server": "imap.gmail.com",
+    "imap_port": 993,
+    "email": "n.maloom557@gmail.com",
+    "app_password": "YOUR_16_CHAR_GMAIL_APP_PASSWORD",
+    "sender_filter": "dailykashmirtimes.ib@gmail.com",
+    "search_folder": "INBOX"
+  },
+  "publications": {
+    "pukkar": {
+      "name": "Daily Pukkar e Azadi",
+      "wp_url": "https://dailypukkareazadi.com",
+      "api_key": "YOUR_PUKKAR_MAKE_CONNECTOR_API_KEY",
+      "category_id": 42,
+      "author_id": 3,
+      "keywords": [
+        "pukk",
+        "azadi"
+      ],
+      "expected_pages": 4
+    },
+    "kashmir_times": {
+      "name": "Daily Kashmir Times",
+      "wp_url": "https://dailykashmirtimes.com.pk",
+      "api_key": "m,w2Z[R5_>`rC^mp,3x8eukc7I/W@iF;",
+      "category_id": 42,
+      "author_id": 1,
+      "keywords": [
+        "kashmir",
+        "times"
+      ],
+      "expected_pages": 8
+    }
+  }
+}

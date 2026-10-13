@@ -1,0 +1,147 @@
+{
+  "name": "n8n Pre-Update Snapshot & Backup Engine",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e1a2b3c4-0001-4000-8000-000000000001",
+      "name": "Trigger Backup on Demand",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst pad = (n) => String(n).padStart(2, \"0\");\nconst timestamp = `${now.getUTCFullYear()}${pad(now.getUTCMonth() + 1)}${pad(now.getUTCDate())}_${pad(now.getUTCHours())}${pad(now.getUTCMinutes())}${pad(now.getUTCSeconds())}`;\n\nreturn [{\n  json: {\n    backupTimestamp: timestamp,\n    backupFolder: `n8n_backup_${timestamp}`,\n    n8nBaseUrl: $env.N8N_URL || \"http://localhost:5678\",\n    apiKey: $env.N8N_API_KEY\n  }\n}];"
+      },
+      "id": "e1a2b3c4-0002-4000-8000-000000000002",
+      "name": "Initialize Backup Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.n8nBaseUrl }}/api/v1/workflows",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "={{ $json.apiKey }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e1a2b3c4-0003-4000-8000-000000000003",
+      "name": "Export All Workflows",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $(\"Initialize Backup Context\").first().json.n8nBaseUrl }}/api/v1/credentials",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-N8N-API-KEY",
+              "value": "={{ $(\"Initialize Backup Context\").first().json.apiKey }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e1a2b3c4-0004-4000-8000-000000000004",
+      "name": "Export Credentials List",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const backupMeta = $(\"Initialize Backup Context\").first().json;\nconst workflowsResponse = $(\"Export All Workflows\").first().json.data || [];\nconst rawCredentials = $(\"Export Credentials List\").first().json.data || [];\n\n// Security Rule: Strip every credential property except non sensitive metadata\nconst sanitizedCredentials = rawCredentials.map(c => ({\n  id: c.id,\n  name: c.name,\n  type: c.type,\n  createdAt: c.createdAt,\n  updatedAt: c.updatedAt\n}));\n\nconst manifest = {\n  backupTimestamp: backupMeta.backupTimestamp,\n  totalWorkflows: workflowsResponse.length,\n  activeWorkflows: workflowsResponse.filter(w => w.active).length,\n  totalCredentials: sanitizedCredentials.length,\n  exportedAt: new Date().toISOString(),\n  workflows: workflowsResponse,\n  credentialsInventory: sanitizedCredentials\n};\n\nconst formattedJson = JSON.stringify(manifest, null, 2);\nconst binaryData = Buffer.from(formattedJson, \"utf8\").toString(\"base64\");\n\nreturn [{\n  json: {\n    status: \"SUCCESS\",\n    backupFolder: backupMeta.backupFolder,\n    fileName: `n8n_manifest_${backupMeta.backupTimestamp}.json`,\n    workflowsCount: workflowsResponse.length,\n    credentialsCount: sanitizedCredentials.length,\n    summary: `Backup complete: ${workflowsResponse.length} workflows and ${sanitizedCredentials.length} credential references preserved.`\n  },\n  binary: {\n    data: {\n      data: binaryData,\n      mimeType: \"application/json\",\n      fileName: `n8n_manifest_${backupMeta.backupTimestamp}.json`\n    }\n  }\n}];"
+      },
+      "id": "e1a2b3c4-0005-4000-8000-000000000005",
+      "name": "Sanitize & Compile Manifest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        920,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Trigger Backup on Demand": {
+      "main": [
+        [
+          {
+            "node": "Initialize Backup Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize Backup Context": {
+      "main": [
+        [
+          {
+            "node": "Export All Workflows",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Export Credentials List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Export All Workflows": {
+      "main": [
+        [
+          {
+            "node": "Sanitize & Compile Manifest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Export Credentials List": {
+      "main": [
+        [
+          {
+            "node": "Sanitize & Compile Manifest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

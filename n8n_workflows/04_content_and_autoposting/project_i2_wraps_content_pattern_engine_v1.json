@@ -1,0 +1,664 @@
+{
+  "updatedAt": "2026-10-06T02:01:24.538Z",
+  "createdAt": "2026-09-24T03:14:37.970Z",
+  "id": "1E8CgHhfnOlhKUVk",
+  "name": "PROJECT I2: Wraps Content Pattern Engine v1",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "trigger-1",
+      "name": "Manual / Test Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1392,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "id": "schedule-daily",
+      "name": "Daily Ingestion Schedule (06:00 UTC)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1392,
+        112
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-sheet-id",
+              "name": "sheet_id",
+              "value": "1xi21FAQT-gr2L5vYcuOxef24bnk0uSTMUC_7Bf5-Oqs",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "i2-config",
+      "name": "Set: Sheet Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1152,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set: Sheet Config').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "raw",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "i2-sheets-read",
+      "name": "Google Sheets: Read Existing Post IDs",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "alwaysOutputData": true,
+      "position": [
+        -912,
+        208
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "7YuPBsnYdCUYDcnB",
+          "name": "I2 Google Sheets service account (local)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nreturn [\n  {\n    json: {\n      name: \"CK Wraps\",\n      category: \"Master Installer & Technique\",\n      url: \"https://www.youtube.com/@ckwraps/shorts\"\n    }\n  },\n  {\n    json: {\n      name: \"Inozetek\",\n      category: \"Luxury Color Change & PPF\",\n      url: \"https://www.youtube.com/@inozetek/shorts\"\n    }\n  },\n  {\n    json: {\n      name: \"Tinybot Vinyl\",\n      category: \"Color Change & Short Form ASMR\",\n      url: \"https://www.youtube.com/@tinybotvinyl/shorts\"\n    }\n  },\n  {\n    json: {\n      name: \"Metro Restyling\",\n      category: \"Distributor & Restyler Showcases\",\n      url: \"https://www.youtube.com/@MetroRestyling/shorts\"\n    }\n  },\n  {\n    json: {\n      name: \"DipYourCar\",\n      category: \"Peelable Auto Coatings\",\n      url: \"https://www.youtube.com/@dipyourcar/shorts\"\n    }\n  },\n  {\n    json: {\n      name: \"Mile High Customs\",\n      category: \"High End Automotive Restyling\",\n      url: \"https://www.youtube.com/@milehighcustoms/shorts\"\n    }\n  },\n  {\n    json: {\n      name: \"Paradox The Wrapper\",\n      category: \"Vinyl Wrap & Craftsmanship\",\n      url: \"https://www.youtube.com/@ParadoxTheWrapper/shorts\"\n    }\n  },\n  {\n    json: {\n      name: \"EVS Motors\",\n      category: \"Supercar Vinyl & PPF\",\n      url: \"https://www.youtube.com/@evsmotors/shorts\"\n    }\n  }\n];\n"
+      },
+      "id": "code-channels",
+      "name": "Code: Define 10+ Curated Watchlist",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-US,en;q=0.9"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "id": "http-feed",
+      "name": "HTTP: Fetch Channel Feed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -432,
+        208
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Studio Shorts shelves in, new qualified posts out. Nothing is estimated here: the real date, views and likes\n// come from the post page in the next step. This node reads only the title and the rounded shelf view count.\nconst existingRows = $(\"Google Sheets: Read Existing Post IDs\").all();\nconst existingIds = new Set();\nconst existingUrls = new Set();\nfor (const row of existingRows) {\n  if (row.json) {\n    if (row.json.post_id) existingIds.add(String(row.json.post_id).trim());\n    if (row.json.source_url) existingUrls.add(String(row.json.source_url).trim());\n  }\n}\n\nconst negativeRegex = /(window tint|tinted glass|ceramic coat|oil change|exhaust sound|turbo upgrade|engine swap|brake pad|dent repair|crash|car accident|mechanic review|transmission)/i;\nconst disasterRegex = /(ruined|destroyed|worst wrap|failed inspect|police stopped|lawsuit|scratching paint|blade slipped|nightmare)/i;\nconst wrapWhitelistRegex = /(wrap|vinyl|ppf|paint protection|squeegee|knifeless|peel|color change|fleet|livery|corner tuck|heat gun|decal|matte|satin|gloss|metallic|shield|film|rwb|build|diy|car|auto|color|transformation)/i;\nconst giveawayRegex = /(giveaway|win a free|tag 3 friends|enter to win|raffle|free wrap contest)/i;\nconst MAX_PER_CHANNEL = 8;\n\nfunction decode(text) {\n  try { return JSON.parse('\"' + text + '\"'); } catch (e) { return text; }\n}\nfunction shelfViews(acc) {\n  const m = acc.match(/([0-9][0-9.,]*)\\s*(thousand|million)?\\s*views?\\b/i);\n  if (!m) return null;\n  const num = parseFloat(m[1].replace(/,/g, \"\"));\n  if (!Number.isFinite(num)) return null;\n  const unit = (m[2] || \"\").toLowerCase();\n  return Math.round(unit === \"million\" ? num * 1000000 : unit === \"thousand\" ? num * 1000 : num);\n}\n\nconst channelGroups = new Map();\nfor (const input of $input.all()) {\n  const rawText = input.json.data || input.json;\n  if (!rawText || typeof rawText !== \"string\" || !rawText.includes(\"shortsLockupViewModel\")) continue;\n  const channelMatch = rawText.match(/<meta property=\"og:title\" content=\"([^\"]+)\"/) || rawText.match(/<title>([^<]+)<\\/title>/);\n  const channelName = channelMatch ? decode(channelMatch[1].replace(\" - YouTube\", \"\").trim()) : \"Wrap Studio\";\n  const shortsRegex = /\"shortsLockupViewModel\":\\{[\\s\\S]*?\"entityId\":\"shorts-shelf-item-([a-zA-Z0-9_-]{11})\"[\\s\\S]*?\"accessibilityText\":\"([^\"]+)\"/g;\n  const entries = [];\n  let match;\n  while ((match = shortsRegex.exec(rawText)) !== null) {\n    const acc = decode(match[2]);\n    const views = shelfViews(acc);\n    if (views === null) continue;\n    const title = acc.replace(/,\\s*[0-9][0-9.,]*\\s*(thousand|million)?\\s*views?\\b.*$/i, \"\").trim();\n    entries.push({\n      postId: match[1],\n      title,\n      sourceUrl: `https://www.youtube.com/shorts/${match[1]}`,\n      thumbUrl: `https://i.ytimg.com/vi/${match[1]}/hqdefault.jpg`,\n      views\n    });\n  }\n  if (entries.length > 0) channelGroups.set(channelName, entries);\n}\n\nconst ingestedAt = new Date().toISOString();\nconst qualifiedItems = [];\nconst seenHashes = new Set();\n\nfor (const [channelName, entries] of channelGroups.entries()) {\n  // Baseline: median shelf views of this studio's recent Shorts.\n  const viewsList = entries.map(e => e.views).sort((a, b) => a - b);\n  const baselineViews = viewsList[Math.floor(viewsList.length / 2)];\n  let taken = 0;\n\n  for (const entry of entries) {\n    if (taken >= MAX_PER_CHANNEL) break;\n    if (existingIds.has(entry.postId) || existingUrls.has(entry.sourceUrl)) continue;\n\n    const headlineOnly = entry.title.replace(/#[a-zA-Z0-9_]+/g, \"\").trim();\n    const contentHash = `${channelName}:${headlineOnly.toLowerCase().replace(/[^a-z0-9]/g, \"\")}`;\n    if (seenHashes.has(contentHash)) continue;\n    seenHashes.add(contentHash);\n\n    if (negativeRegex.test(headlineOnly)) continue;\n    if (disasterRegex.test(headlineOnly)) continue;\n    if (!wrapWhitelistRegex.test(entry.title)) continue;\n    if (giveawayRegex.test(entry.title)) continue;\n    taken++;\n\n    const titleLower = entry.title.toLowerCase();\n    let wrapCategory = \"Commercial Fleet\";\n    if (titleLower.includes(\"color\") || titleLower.includes(\"gloss\") || titleLower.includes(\"satin\") || titleLower.includes(\"matte\") || titleLower.includes(\"shift\")) {\n      wrapCategory = \"Consumer Color Change\";\n    } else if (titleLower.includes(\"ppf\") || titleLower.includes(\"protect\")) {\n      wrapCategory = \"Paint Protection Film\";\n    } else if (titleLower.includes(\"hood\") || titleLower.includes(\"roof\") || titleLower.includes(\"partial\")) {\n      wrapCategory = \"Partial Wrap\";\n    }\n\n    qualifiedItems.push({\n      post_id: entry.postId,\n      platform: \"YouTube Shorts\",\n      creator_handle: channelName,\n      source_url: entry.sourceUrl,\n      permanent_media_url: entry.thumbUrl,\n      caption_text: entry.title,\n      wrap_category: wrapCategory,\n      baseline_views: baselineViews,\n      ingested_at: ingestedAt\n    });\n  }\n}\n\n// No new posts: one marker item, so the IF node takes its failure branch instead of ending silently.\nif (qualifiedItems.length === 0) return [{ json: { note: \"no new qualified posts\" } }];\nreturn qualifiedItems.map(item => ({ json: item }));\n"
+      },
+      "id": "code-filter-dedup-quality",
+      "name": "Code: Master Filter, Dedup & Velocity Engine",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -192,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond_has_post_id",
+              "leftValue": "={{ $json.post_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-has-records",
+      "name": "IF: New Qualified Posts Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        48,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Joins each qualified post with its real page data, fetched here from the public Shorts page.\n// A post with no usable date or view count is dropped, never estimated. Posts under 6 hours old are dropped (observation floor).\nconst helpers = this.helpers;\nconst MIN_AGE_HOURS = 6;\nconst CONCURRENCY = 6;\nconst UA = \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\";\nconst posts = $input.all().map(i => i.json);\nconst nowMs = Date.now();\n\nasync function pageMeta(postId) {\n  try {\n    const html = await helpers.httpRequest({\n      method: \"GET\",\n      url: `https://www.youtube.com/shorts/${postId}`,\n      headers: { \"User-Agent\": UA, \"Accept-Language\": \"en-US,en;q=0.9\" },\n      timeout: 30000,\n      json: false\n    });\n    const text = typeof html === \"string\" ? html : \"\";\n    const date = text.match(/\"publishDate\":\"([^\"]+)\"/);\n    const views = text.match(/\"viewCount\":\"(\\d+)\"/);\n    const likes = text.match(/\"likeCount\":\"?(\\d+)/);\n    if (!date || !views) return null;\n    const published = new Date(date[1]);\n    if (Number.isNaN(published.getTime())) return null;\n    return { published_at: published.toISOString(), views: parseInt(views[1], 10), likes: likes ? parseInt(likes[1], 10) : null };\n  } catch (e) {\n    return null;\n  }\n}\n\nconst metas = [];\nfor (let i = 0; i < posts.length; i += CONCURRENCY) {\n  metas.push(...await Promise.all(posts.slice(i, i + CONCURRENCY).map(p => pageMeta(p.post_id))));\n}\n\nconst out = [];\nlet failed = 0;\nlet tooNew = 0;\nposts.forEach((post, i) => {\n  const meta = metas[i];\n  if (!meta) { failed++; return; }\n  const ageHours = (nowMs - new Date(meta.published_at).getTime()) / 3600000;\n  if (!(ageHours >= MIN_AGE_HOURS)) { tooNew++; return; }\n  out.push({\n    json: {\n      ...post,\n      published_at: meta.published_at,\n      views_count: meta.views,\n      likes_count: meta.likes === null ? \"\" : meta.likes,\n      comments_count: \"\",\n      viral_velocity_per_hour: Math.round(meta.views / ageHours),\n      outlier_multiplier: parseFloat((meta.views / Math.max(post.baseline_views, 100)).toFixed(2))\n    }\n  });\n});\n\nif (out.length === 0) {\n  throw new Error(`Post page data unusable for all ${posts.length} posts (fetch or parse failed: ${failed}, under ${MIN_AGE_HOURS}h old: ${tooNew}). Check the YouTube page format and this server's access to youtube.com.`);\n}\nreturn out;\n"
+      },
+      "id": "i2-fetch-merge",
+      "name": "Code: Fetch Post Metadata And Merge",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set: Sheet Config').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "raw",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "i2-sheets-raw",
+      "name": "Google Sheets: Append Raw",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        528,
+        208
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "7YuPBsnYdCUYDcnB",
+          "name": "I2 Google Sheets service account (local)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// One Gemini request per post. Gemini watches the first 15 seconds of the public Short (video and audio) at low\n// frame resolution, so the tags come from what is on screen, not from the title. JSON schema output, temperature 0.\nconst ENUMS = {\n  \"market_segment\": [\n    \"Commercial Fleet\",\n    \"Consumer Color Change\",\n    \"Paint Protection Film\",\n    \"Partial Wrap\"\n  ],\n  \"visual_hook_archetype\": [\n    \"The 3 Second Corner Tuck Macro Hook\",\n    \"The Satisfying Hood Peel ASMR\",\n    \"The Costly Installer Mistake Warning\",\n    \"The Commercial Work Van Rolling Billboard\",\n    \"The Liquid Gloss Sunlight Flake Pop\",\n    \"No Clear Match\"\n  ],\n  \"visual_composition\": [\n    \"Cinematic 360 Orbit\",\n    \"Macro Extreme Close Up\",\n    \"High Velocity Time Lapse Compression\",\n    \"Split Screen Before and After\"\n  ],\n  \"audio_profile\": [\n    \"Raw Shop Ambient ASMR Squeegee Sound\",\n    \"Spoken Founder Educational Voiceover\",\n    \"Trending Beat Drop Bass Sync\"\n  ],\n  \"offer_call_to_action\": [\n    \"Direct Bio Quote Link\",\n    \"Fleet Volume Pricing Tease\",\n    \"Color Sample Swatch Request\",\n    \"Local Metro Installation Booking\"\n  ],\n  \"replicability_tier\": [\n    \"High Replicability\",\n    \"Medium Replicability\"\n  ]\n};\nconst FIELDS = Object.keys(ENUMS);\n\nconst properties = {};\nfor (const key of FIELDS) properties[key] = { type: \"STRING\", enum: ENUMS[key] };\nproperties.performance_thesis = { type: \"STRING\" };\n\nconst systemText = \"You are an elite short form automotive creative director studying vehicle wrap Shorts. \" +\n  \"You are given the first 15 seconds of one public Short, video and audio, plus its title and public numbers. \" +\n  \"Classify only what you can see and hear. visual_hook_archetype describes the first 3 seconds: if none of the five patterns fits, use \\\"No Clear Match\\\". \" +\n  \"audio_profile describes the sound you hear. performance_thesis is two sentences on why the opening may have held attention, \" +\n  \"inferred from what is on screen and the numbers. Do not claim anything you cannot see or hear.\";\n\n// Reads the typed post rows from the merge step, so it does not depend on what the Sheets node returns.\nreturn $(\"Code: Fetch Post Metadata And Merge\").all().map(item => {\n  const p = item.json;\n  const userText = `Post ID: ${p.post_id}\\nStudio: ${p.creator_handle}\\nTitle: ${p.caption_text}\\nPublished: ${p.published_at}\\n` +\n    `Views: ${p.views_count}\\nLikes: ${p.likes_count}\\nViews as a multiple of the studio median: ${p.outlier_multiplier}x\\n\\n` +\n    \"Classify the first 15 seconds of this Short.\";\n  return {\n    json: {\n      post_id: p.post_id,\n      request: {\n        systemInstruction: { parts: [{ text: systemText }] },\n        contents: [{\n          role: \"user\",\n          parts: [\n            { fileData: { fileUri: `https://www.youtube.com/watch?v=${p.post_id}` }, videoMetadata: { startOffset: \"0s\", endOffset: \"15s\" } },\n            { text: userText }\n          ]\n        }],\n        generationConfig: {\n          temperature: 0,\n          responseMimeType: \"application/json\",\n          mediaResolution: \"MEDIA_RESOLUTION_LOW\",\n          responseSchema: { type: \"OBJECT\", properties, required: [...FIELDS, \"performance_thesis\"] }\n        }\n      }\n    }\n  };\n});\n"
+      },
+      "id": "i2-build-gemini-request",
+      "name": "Code: Build Gemini Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googlePalmApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.request }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 4000
+            }
+          },
+          "timeout": 120000
+        }
+      },
+      "id": "i2-gemini-video",
+      "name": "HTTP: Gemini Video Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "retryOnFail": true,
+      "maxTries": 4,
+      "waitBetweenTries": 5000,
+      "position": [
+        1008,
+        208
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vvxfmXZ3AVztd90O",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reads Gemini's JSON (from the video analysis call) for each post. No fallback tags and no default values: a post Gemini did not tag cleanly\n// is left out of the patterns tab, and a run where Gemini fails for most posts stops with an error.\nconst ENUMS = {\n  market_segment: [\"Commercial Fleet\", \"Consumer Color Change\", \"Paint Protection Film\", \"Partial Wrap\"],\n  visual_hook_archetype: [\"The 3 Second Corner Tuck Macro Hook\", \"The Satisfying Hood Peel ASMR\", \"The Costly Installer Mistake Warning\", \"The Commercial Work Van Rolling Billboard\", \"The Liquid Gloss Sunlight Flake Pop\"] .concat([\"No Clear Match\"]),\n  visual_composition: [\"Cinematic 360 Orbit\", \"Macro Extreme Close Up\", \"High Velocity Time Lapse Compression\", \"Split Screen Before and After\"],\n  audio_profile: [\"Raw Shop Ambient ASMR Squeegee Sound\", \"Spoken Founder Educational Voiceover\", \"Trending Beat Drop Bass Sync\"],\n  offer_call_to_action: [\"Direct Bio Quote Link\", \"Fleet Volume Pricing Tease\", \"Color Sample Swatch Request\", \"Local Metro Installation Booking\"],\n  replicability_tier: [\"High Replicability\", \"Medium Replicability\"]\n};\nconst MAX_FAILED_SHARE = 0.3;\n\nconst items = $input.all();\nconst rawItems = $(\"Code: Fetch Post Metadata And Merge\").all();\nconst rows = [];\nconst failures = [];\n\nfor (let idx = 0; idx < items.length; idx++) {\n  const raw = (rawItems[idx] && rawItems[idx].json) || {};\n  const j = items[idx].json || {};\n  let parsed = null;\n  let why = \"\";\n\n  if (j.error) {\n    why = typeof j.error === \"string\" ? j.error : (j.error.message || \"Gemini error\");\n  } else {\n    const candidate = (j.candidates && j.candidates[0]) || {};\n    const part = ((candidate.content && candidate.content.parts) || []).find(p => typeof p.text === \"string\");\n    if (!part) {\n      why = `no text in the Gemini response (finishReason ${candidate.finishReason || \"none\"})`;\n    } else {\n      try {\n        parsed = JSON.parse(part.text.trim());\n      } catch (e) {\n        why = \"Gemini returned invalid JSON\";\n      }\n    }\n  }\n\n  if (parsed) {\n    for (const key of Object.keys(ENUMS)) {\n      if (!ENUMS[key].includes(parsed[key])) { why = `unexpected value for ${key}`; parsed = null; break; }\n    }\n  }\n  if (parsed && (typeof parsed.performance_thesis !== \"string\" || parsed.performance_thesis.trim().length < 20)) {\n    why = \"performance_thesis missing\"; parsed = null;\n  }\n  if (!parsed) { failures.push(`${raw.post_id || \"post \" + idx}: ${why}`); continue; }\n\n  rows.push({\n    json: {\n      post_id: raw.post_id,\n      creator_handle: raw.creator_handle || \"\",\n      source_url: raw.source_url || \"\",\n      views_count: raw.views_count,\n      likes_count: raw.likes_count,\n      ingested_at: raw.ingested_at,\n      market_segment: parsed.market_segment,\n      visual_hook_archetype: parsed.visual_hook_archetype,\n      visual_composition: parsed.visual_composition,\n      audio_profile: parsed.audio_profile,\n      offer_call_to_action: parsed.offer_call_to_action,\n      performance_thesis: parsed.performance_thesis.trim(),\n      replicability_tier: parsed.replicability_tier\n    }\n  });\n}\n\nif (rows.length === 0 || failures.length / Math.max(items.length, 1) > MAX_FAILED_SHARE) {\n  throw new Error(`Gemini tagging failed for ${failures.length} of ${items.length} posts. First: ${failures.slice(0, 3).join(\" | \")}`);\n}\nreturn rows;\n"
+      },
+      "id": "code-parse-gemini-output",
+      "name": "Code: Parse Gemini Pattern Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set: Sheet Config').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "pattern",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "i2-sheets-patterns",
+      "name": "Google Sheets: Append Patterns",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1488,
+        208
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "7YuPBsnYdCUYDcnB",
+          "name": "I2 Google Sheets service account (local)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Top patterns from this run's tagged posts. Lift is the median of each post's views divided by its studio's\n// median views, minus 1. Patterns with fewer than MIN_N posts stay in the table but rank below the rest and are\n// labelled low sample. Patterns with no posts are not listed. The shot, audio and copy text is a fixed creative\n// template per pattern: only the lift, the post count and the post_ids come from the data.\nconst MIN_N = 3;\nconst playbooks = {\n  \"The 3 Second Corner Tuck Macro Hook\": {\n    \"target\": \"Commercial Fleet and Master Restylers\",\n    \"shot1\": \"Macro extreme close up of heat gun stretching vinyl over compound curved door handle (0 to 3s)\",\n    \"shot2\": \"Snap cut to seamless corner tuck without relief cut wrinkle (3 to 6s)\",\n    \"shot3\": \"Steadicam pull back revealing full vehicle livery under fluorescent bay lighting (6 to 12s)\",\n    \"audio\": \"Raw shop heat gun hiss into sharp vinyl squeak, followed by heavy bass drop reveal\",\n    \"copy\": \"No wrinkles, no excuses. Commercial fleet wraps built for daily work. Link in bio for fleet quotes.\"\n  },\n  \"The Satisfying Hood Peel ASMR\": {\n    \"target\": \"B2C Color Change Enthusiasts\",\n    \"shot1\": \"Single continuous hand pull removing clear protective cap from ultra gloss vinyl (0 to 3s)\",\n    \"shot2\": \"Camera pans alongside vinyl peel reflecting studio tube lights (3 to 7s)\",\n    \"shot3\": \"Low angle optical glare shot capturing deep metallic flake in sunlight (7 to 15s)\",\n    \"audio\": \"Microphone glued to vinyl edge for pure crisp ASMR peel acoustic, zero music\",\n    \"copy\": \"Satisfying from every angle. Comment your dream car color below. Message us to book a slot.\"\n  },\n  \"The Costly Installer Mistake Warning\": {\n    \"target\": \"Trade Business Owners and Quality Seekers\",\n    \"shot1\": \"Red grease pencil circling a peeling edge on a competitor wrap with bold text: Never Do This (0 to 2s)\",\n    \"shot2\": \"Side by side split screen showing failed dry application vs proper wet knifeless tape method (2 to 7s)\",\n    \"shot3\": \"Finished panel flush cut with zero exposed factory paint (7 to 14s)\",\n    \"audio\": \"Direct spoken voiceover with confident technical authority and subtle background beat\",\n    \"copy\": \"Why edges lift when prep is rushed. DM us for a consultation.\"\n  },\n  \"The Commercial Work Van Rolling Billboard\": {\n    \"target\": \"B2B Commercial Contractors (Plumbing, HVAC, Electrical)\",\n    \"shot1\": \"Beat up, faded white work van rolling into the dark garage bay (0 to 3s)\",\n    \"shot2\": \"High speed 15x time lapse showing two technicians applying full branded commercial wrap (3 to 8s)\",\n    \"shot3\": \"Bright daylight delivery shot with oversized phone number and QR code clearly legible from 50 feet (8 to 15s)\",\n    \"audio\": \"High tempo upbeat electronic track with quick transition swooshes\",\n    \"copy\": \"Turn your work van into a rolling billboard. Request pricing today.\"\n  },\n  \"The Liquid Gloss Sunlight Flake Pop\": {\n    \"target\": \"Exotic and Luxury Vehicle Owners\",\n    \"shot1\": \"Wheel rolling in slow motion, sun hits the front fender causing an instant color flip (0 to 3s)\",\n    \"shot2\": \"Low gimbal orbit around front bumper showing laser cut emblem insets (3 to 8s)\",\n    \"shot3\": \"Full 360 drone orbit at golden hour capturing liquid gloss depth (8 to 15s)\",\n    \"audio\": \"Ambient cinematic deep synth with subtle exhaust note overlay\",\n    \"copy\": \"Paint protection and color change done right. DM for package details.\"\n  }\n};\n\nconst analyzed = $(\"Code: Parse Gemini Pattern Output\").all().map(i => i.json);\nconst rawMap = new Map($(\"Code: Fetch Post Metadata And Merge\").all().map(i => [i.json.post_id, i.json]));\nconst groups = new Map(Object.keys(playbooks).map(name => [name, []]));\n\nfor (const p of analyzed) {\n  const raw = rawMap.get(p.post_id);\n  const multiplier = raw ? parseFloat(raw.outlier_multiplier) : NaN;\n  if (groups.has(p.visual_hook_archetype) && Number.isFinite(multiplier)) groups.get(p.visual_hook_archetype).push({ multiplier, post_id: p.post_id });\n}\n\nfunction median(values) {\n  const s = [...values].sort((a, b) => a - b);\n  const k = Math.floor(s.length / 2);\n  return s.length % 2 ? s[k] : (s[k - 1] + s[k]) / 2;\n}\n\nconst ranked = [...groups.entries()]\n  .filter(([, entries]) => entries.length > 0)\n  .map(([name, entries]) => ({ name, n: entries.length, lift: Math.round((median(entries.map(e => e.multiplier)) - 1) * 100), ids: entries.map(e => e.post_id).join(\", \") }))\n  .sort((a, b) => (b.n >= MIN_N) - (a.n >= MIN_N) || b.lift - a.lift || b.n - a.n)\n  .slice(0, 5);\n\nif (ranked.length === 0) throw new Error(\"No tagged post matched a known pattern, so there is nothing to summarize.\");\n\nreturn ranked.map((r, i) => {\n  const t = playbooks[r.name];\n  const direction = r.lift >= 0 ? `${r.lift}% above` : `${Math.abs(r.lift)}% below`;\n  const lowSample = r.n >= MIN_N ? \"\" : \", low sample\";\n  return {\n    json: {\n      rank: i + 1,\n      pattern_name: r.name,\n      target_audience: t.target,\n      average_outlier_lift: `${direction} studio median views (median of ${r.n} posts${lowSample})`,\n      sample_count: r.n,\n      post_ids: r.ids,\n      shot_1_hook: t.shot1,\n      shot_2_transition: t.shot2,\n      shot_3_reveal: t.shot3,\n      audio_direction: t.audio,\n      copy_cta_template: t.copy\n    }\n  };\n});\n"
+      },
+      "id": "code-weekly-summary",
+      "name": "Code: Dynamic Top 5 Synthesizer",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Set: Sheet Config').first().json.sheet_id }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "summary",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "cellFormat": "RAW"
+        }
+      },
+      "id": "i2-sheets-summary",
+      "name": "Google Sheets: Append Summary",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1968,
+        208
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "7YuPBsnYdCUYDcnB",
+          "name": "I2 Google Sheets service account (local)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "error-trigger",
+      "name": "Error Trigger: Silent Failure Alert",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst err = $json.execution?.error || {};\nreturn [\n  {\n    json: {\n      alert_status: \"CRITICAL_PIPELINE_FAILURE\",\n      failed_at: new Date().toISOString(),\n      workflow_name: $json.workflow?.name,\n      failing_node: err.node?.name || \"Unknown Node\",\n      error_message: err.message || \"Unhandled exception in execution\",\n      stack_summary: err.stack ? err.stack.slice(0, 300) : \"No stack trace\"\n    }\n  }\n];\n"
+      },
+      "id": "code-log-failure",
+      "name": "Code: Log Failure Details",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        464
+      ]
+    }
+  ],
+  "connections": {
+    "Manual / Test Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set: Sheet Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily Ingestion Schedule (06:00 UTC)": {
+      "main": [
+        [
+          {
+            "node": "Set: Sheet Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set: Sheet Config": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Read Existing Post IDs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Read Existing Post IDs": {
+      "main": [
+        [
+          {
+            "node": "Code: Define 10+ Curated Watchlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Define 10+ Curated Watchlist": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Fetch Channel Feed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Fetch Channel Feed": {
+      "main": [
+        [
+          {
+            "node": "Code: Master Filter, Dedup & Velocity Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Master Filter, Dedup & Velocity Engine": {
+      "main": [
+        [
+          {
+            "node": "IF: New Qualified Posts Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: New Qualified Posts Found?": {
+      "main": [
+        [
+          {
+            "node": "Code: Fetch Post Metadata And Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code: Log Failure Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Fetch Post Metadata And Merge": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Append Raw",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Append Raw": {
+      "main": [
+        [
+          {
+            "node": "Code: Build Gemini Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Build Gemini Request": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Gemini Video Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Gemini Video Analysis": {
+      "main": [
+        [
+          {
+            "node": "Code: Parse Gemini Pattern Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Parse Gemini Pattern Output": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Append Patterns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets: Append Patterns": {
+      "main": [
+        [
+          {
+            "node": "Code: Dynamic Top 5 Synthesizer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Dynamic Top 5 Synthesizer": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets: Append Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger: Silent Failure Alert": {
+      "main": [
+        [
+          {
+            "node": "Code: Log Failure Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "saveManualExecutions": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "staticData": {
+    "node:Daily Ingestion Schedule (06:00 UTC)": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "6f4f329b-a8b5-48e5-9edc-e2839966e58f",
+  "activeVersionId": "e2b481de-9953-4c70-831c-5fa690a4ef7d",
+  "versionCounter": 141,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-24T03:14:37.977Z",
+      "createdAt": "2026-09-24T03:14:37.977Z",
+      "role": "workflow:owner",
+      "workflowId": "1E8CgHhfnOlhKUVk",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

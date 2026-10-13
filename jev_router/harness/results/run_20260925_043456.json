@@ -1,0 +1,321 @@
+{
+  "run_timestamp": "20260925_043456",
+  "webhook_url": "https://n8n.srv1041226.hstgr.cloud/webhook/router-v1",
+  "total_fixtures": 21,
+  "results": [
+    {
+      "index": 1,
+      "unit_id": "a1b2c3d4-0001-4aaa-8000-000000000001",
+      "label": "C1-01 clean auto lane high confidence",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1486.7,
+      "sent_at": "2026-09-25T04:33:44.416274Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0001-4aaa-8000-000000000001",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:18.674Z"
+      }
+    },
+    {
+      "index": 2,
+      "unit_id": "a1b2c3d4-0002-4aaa-8000-000000000002",
+      "label": "C1-02 clean auto lane near-ceiling confidence",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1408.2,
+      "sent_at": "2026-09-25T04:33:47.903246Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0002-4aaa-8000-000000000002",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:22.082Z"
+      }
+    },
+    {
+      "index": 3,
+      "unit_id": "a1b2c3d4-0003-4aaa-8000-000000000003",
+      "label": "C1-03 clean auto lane minimum auto threshold",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 2159.5,
+      "sent_at": "2026-09-25T04:33:51.312033Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0003-4aaa-8000-000000000003",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:26.175Z"
+      }
+    },
+    {
+      "index": 4,
+      "unit_id": "a1b2c3d4-0004-4aaa-8000-000000000004",
+      "label": "C1-04 clean auto lane multi-sentence input",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1250.2,
+      "sent_at": "2026-09-25T04:33:55.472074Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0004-4aaa-8000-000000000004",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:29.478Z"
+      }
+    },
+    {
+      "index": 5,
+      "unit_id": "a1b2c3d4-0005-4aaa-8000-000000000005",
+      "label": "C2-01 clean verify lane mid confidence",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1415.7,
+      "sent_at": "2026-09-25T04:33:58.723654Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0005-4aaa-8000-000000000005",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:32.837Z"
+      }
+    },
+    {
+      "index": 6,
+      "unit_id": "a1b2c3d4-0006-4aaa-8000-000000000006",
+      "label": "C2-02 clean verify lane lower mid confidence",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1704.9,
+      "sent_at": "2026-09-25T04:34:02.145788Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0006-4aaa-8000-000000000006",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:36.603Z"
+      }
+    },
+    {
+      "index": 7,
+      "unit_id": "a1b2c3d4-0007-4aaa-8000-000000000007",
+      "label": "C2-03 clean verify lane confidence near verify ceiling",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1516.9,
+      "sent_at": "2026-09-25T04:34:05.850948Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0007-4aaa-8000-000000000007",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:40.100Z"
+      }
+    },
+    {
+      "index": 8,
+      "unit_id": "a1b2c3d4-0008-4aaa-8000-000000000008",
+      "label": "C3-01 clean human lane low confidence",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1528.2,
+      "sent_at": "2026-09-25T04:34:09.371053Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0008-4aaa-8000-000000000008",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:43.670Z"
+      }
+    },
+    {
+      "index": 9,
+      "unit_id": "a1b2c3d4-0009-4aaa-8000-000000000009",
+      "label": "C3-02 clean human lane very low confidence",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1723.5,
+      "sent_at": "2026-09-25T04:34:12.899812Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0009-4aaa-8000-000000000009",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:47.327Z"
+      }
+    },
+    {
+      "index": 10,
+      "unit_id": "a1b2c3d4-0010-4aaa-8000-000000000010",
+      "label": "C3-03 clean human lane near-floor confidence",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1719.0,
+      "sent_at": "2026-09-25T04:34:16.624054Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0010-4aaa-8000-000000000010",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:51.047Z"
+      }
+    },
+    {
+      "index": 11,
+      "unit_id": "a1b2c3d4-0011-4aaa-8000-000000000011",
+      "label": "C4-01 boundary confidence exactly 0.85 must land auto not verify",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1160.3,
+      "sent_at": "2026-09-25T04:34:20.343501Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0011-4aaa-8000-000000000011",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:54.253Z"
+      }
+    },
+    {
+      "index": 12,
+      "unit_id": "a1b2c3d4-0012-4aaa-8000-000000000012",
+      "label": "C4-02 boundary confidence exactly 0.50 must land verify not human",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1765.4,
+      "sent_at": "2026-09-25T04:34:23.504592Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0012-4aaa-8000-000000000012",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:34:57.971Z"
+      }
+    },
+    {
+      "index": 13,
+      "unit_id": "a1b2c3d4-0013-4aaa-8000-000000000013",
+      "label": "C4-03 boundary confidence 0.4999 must land human not verify",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1722.7,
+      "sent_at": "2026-09-25T04:34:27.271136Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0013-4aaa-8000-000000000013",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:35:01.696Z"
+      }
+    },
+    {
+      "index": 14,
+      "unit_id": "a1b2c3d4-0014-4aaa-8000-000000000014",
+      "label": "C5-01 HARNESS_SPECIAL_CASE post raw broken string not json",
+      "malformed": true,
+      "http_status": 422,
+      "latency_ms": 1120.9,
+      "sent_at": "2026-09-25T04:34:30.994271Z",
+      "response": {
+        "code": 422,
+        "message": "Failed to parse request body",
+        "hint": "Expected property name or '}' in JSON at position 1 (line 1 column 2)"
+      }
+    },
+    {
+      "index": 15,
+      "unit_id": "NO_ID",
+      "label": "C5-02 missing required field unit_id absent",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1445.9,
+      "sent_at": "2026-09-25T04:34:34.115639Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "unit_muggw1ws",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:35:08.332Z"
+      }
+    },
+    {
+      "index": 16,
+      "unit_id": "a1b2c3d4-0015-4aaa-8000-000000000015",
+      "label": "C5-03 wrong type confidence string instead of float",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1505.8,
+      "sent_at": "2026-09-25T04:34:37.564521Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0015-4aaa-8000-000000000015",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:35:11.840Z"
+      }
+    },
+    {
+      "index": 17,
+      "unit_id": "a1b2c3d4-0016-4aaa-8000-000000000016",
+      "label": "C6-01 oversized text >15000 chars dead-letter lane expected",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1499.6,
+      "sent_at": "2026-09-25T04:34:41.071177Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0016-4aaa-8000-000000000016",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:35:15.286Z"
+      }
+    },
+    {
+      "index": 18,
+      "unit_id": "a1b2c3d4-0017-4aaa-8000-000000000017",
+      "label": "C7-01 empty text string valid structure otherwise",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1404.4,
+      "sent_at": "2026-09-25T04:34:44.571736Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0017-4aaa-8000-000000000017",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:35:18.729Z"
+      }
+    },
+    {
+      "index": 19,
+      "unit_id": "a1b2c3d4-0018-4aaa-8000-000000000018",
+      "label": "C7-02 whitespace-only text",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1748.0,
+      "sent_at": "2026-09-25T04:34:47.976378Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-0018-4aaa-8000-000000000018",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:35:22.422Z"
+      }
+    },
+    {
+      "index": 20,
+      "unit_id": "a1b2c3d4-d00e-4aaa-8000-000000000099",
+      "label": "C8-01 FIRST send of duplicate ID expect one ledger row created",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1740.2,
+      "sent_at": "2026-09-25T04:34:51.725045Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-d00e-4aaa-8000-000000000099",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:35:26.168Z"
+      }
+    },
+    {
+      "index": 21,
+      "unit_id": "a1b2c3d4-d00e-4aaa-8000-000000000099",
+      "label": "C8-02 SECOND send of same duplicate ID expect NO new ledger row dedup guard fires",
+      "malformed": false,
+      "http_status": 202,
+      "latency_ms": 1160.4,
+      "sent_at": "2026-09-25T04:34:55.465691Z",
+      "response": {
+        "status": "accepted",
+        "unit_id": "a1b2c3d4-d00e-4aaa-8000-000000000099",
+        "message": "Ingested into Router Shell v1 for asynchronous triage",
+        "received_at": "2026-09-25T04:35:29.391Z"
+      }
+    }
+  ]
+}

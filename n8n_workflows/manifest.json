@@ -1,0 +1,650 @@
+[
+  {
+    "name": "Autonomous B2B Lead Enrichment & Outreach Engine",
+    "category": "02_b2b_lead_engines_and_scraping",
+    "filename": "autonomous_b2b_lead_enrichment_outreach_engine.json",
+    "relative_path": "02_b2b_lead_engines_and_scraping/autonomous_b2b_lead_enrichment_outreach_engine.json",
+    "nodes": 9,
+    "active": false
+  },
+  {
+    "name": "Global Error Handler",
+    "category": "06_production_health_and_monitoring",
+    "filename": "global_error_handler.json",
+    "relative_path": "06_production_health_and_monitoring/global_error_handler.json",
+    "nodes": 2,
+    "active": false
+  },
+  {
+    "name": "Autonomous B2B Lead Engine V2",
+    "category": "02_b2b_lead_engines_and_scraping",
+    "filename": "autonomous_b2b_lead_engine_v2.json",
+    "relative_path": "02_b2b_lead_engines_and_scraping/autonomous_b2b_lead_engine_v2.json",
+    "nodes": 6,
+    "active": false
+  },
+  {
+    "name": "URL content extraction",
+    "category": "04_content_and_autoposting",
+    "filename": "url_content_extraction.json",
+    "relative_path": "04_content_and_autoposting/url_content_extraction.json",
+    "nodes": 4,
+    "active": false
+  },
+  {
+    "name": "n8n fundamentals, webhook, http requests",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "n8n_fundamentals_webhook_http_requests.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/n8n_fundamentals_webhook_http_requests.json",
+    "nodes": 6,
+    "active": false
+  },
+  {
+    "name": "My workflow 2",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_2.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_2.json",
+    "nodes": 3,
+    "active": false
+  },
+  {
+    "name": "Forms lead scoring agent",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "forms_lead_scoring_agent.json",
+    "relative_path": "01_ai_agents_and_swarms/forms_lead_scoring_agent.json",
+    "nodes": 7,
+    "active": false
+  },
+  {
+    "name": "RSS Freed News",
+    "category": "04_content_and_autoposting",
+    "filename": "rss_freed_news.json",
+    "relative_path": "04_content_and_autoposting/rss_freed_news.json",
+    "nodes": 18,
+    "active": false
+  },
+  {
+    "name": "RSS Feed workflow",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "rss_feed_workflow.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/rss_feed_workflow.json",
+    "nodes": 13,
+    "active": false
+  },
+  {
+    "name": "My workflow 4",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_4.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_4.json",
+    "nodes": 2,
+    "active": false
+  },
+  {
+    "name": "Social Auto-Posting Engine",
+    "category": "04_content_and_autoposting",
+    "filename": "social_auto_posting_engine.json",
+    "relative_path": "04_content_and_autoposting/social_auto_posting_engine.json",
+    "nodes": 12,
+    "active": false
+  },
+  {
+    "name": "My workflow 5",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_5.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_5.json",
+    "nodes": 16,
+    "active": false
+  },
+  {
+    "name": "My workflow 6",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_6.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_6.json",
+    "nodes": 1,
+    "active": false
+  },
+  {
+    "name": "N8N chat and voice agent",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "n8n_chat_and_voice_agent.json",
+    "relative_path": "01_ai_agents_and_swarms/n8n_chat_and_voice_agent.json",
+    "nodes": 18,
+    "active": false
+  },
+  {
+    "name": "My workflow 7",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_7.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_7.json",
+    "nodes": 2,
+    "active": false
+  },
+  {
+    "name": "My workflow 8",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_8.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_8.json",
+    "nodes": 2,
+    "active": false
+  },
+  {
+    "name": "My workflow 9",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_9.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_9.json",
+    "nodes": 6,
+    "active": false
+  },
+  {
+    "name": "Master Content Autoposting Engine (Multi-Channel Enterprise)",
+    "category": "04_content_and_autoposting",
+    "filename": "master_content_autoposting_engine_multi_channel_enterprise.json",
+    "relative_path": "04_content_and_autoposting/master_content_autoposting_engine_multi_channel_enterprise.json",
+    "nodes": 22,
+    "active": false
+  },
+  {
+    "name": "Personal life manager with Telegram, Google services & voice-enabled AI",
+    "category": "05_messaging_and_voice_ai",
+    "filename": "personal_life_manager_with_telegram_google_services_voice_enabled_ai.json",
+    "relative_path": "05_messaging_and_voice_ai/personal_life_manager_with_telegram_google_services_voice_enabled_ai.json",
+    "nodes": 24,
+    "active": false
+  },
+  {
+    "name": "Talk to google sheets using AI",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "talk_to_google_sheets_using_ai.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/talk_to_google_sheets_using_ai.json",
+    "nodes": 11,
+    "active": false
+  },
+  {
+    "name": "\ud83d\udca5 Generate AI Viral Videos with VEO 3 and Upload to TikTok ",
+    "category": "04_content_and_autoposting",
+    "filename": "generate_ai_viral_videos_with_veo_3_and_upload_to_tiktok.json",
+    "relative_path": "04_content_and_autoposting/generate_ai_viral_videos_with_veo_3_and_upload_to_tiktok.json",
+    "nodes": 24,
+    "active": false
+  },
+  {
+    "name": "Angie, personal AI assistant with Telegram voice and text",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "angie_personal_ai_assistant_with_telegram_voice_and_text.json",
+    "relative_path": "01_ai_agents_and_swarms/angie_personal_ai_assistant_with_telegram_voice_and_text.json",
+    "nodes": 15,
+    "active": false
+  },
+  {
+    "name": "\ud83d\udca5 Generate AI viral videos with NanoBanana & VEO3, shared on socials via Blotato - vide",
+    "category": "04_content_and_autoposting",
+    "filename": "generate_ai_viral_videos_with_nanobanana_veo3_shared_on_socials_via_blotato_vide.json",
+    "relative_path": "04_content_and_autoposting/generate_ai_viral_videos_with_nanobanana_veo3_shared_on_socials_via_blotato_vide.json",
+    "nodes": 47,
+    "active": false
+  },
+  {
+    "name": "RAG Workflow For Company Documents stored in Google Drive",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "rag_workflow_for_company_documents_stored_in_google_drive.json",
+    "relative_path": "03_rag_and_knowledge_systems/rag_workflow_for_company_documents_stored_in_google_drive.json",
+    "nodes": 18,
+    "active": false
+  },
+  {
+    "name": "Basic automatic Gmail email labelling with OpenAI and Gmail API",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "basic_automatic_gmail_email_labelling_with_openai_and_gmail_api.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/basic_automatic_gmail_email_labelling_with_openai_and_gmail_api.json",
+    "nodes": 13,
+    "active": false
+  },
+  {
+    "name": "\ud83e\udd13 Conversion Rate Optimizer",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "conversion_rate_optimizer.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/conversion_rate_optimizer.json",
+    "nodes": 4,
+    "active": false
+  },
+  {
+    "name": "[AI Agent] Build your first AI agent",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "build_your_first_ai_agent.json",
+    "relative_path": "01_ai_agents_and_swarms/build_your_first_ai_agent.json",
+    "nodes": 13,
+    "active": false
+  },
+  {
+    "name": "[AI Agent] \ud83e\udd16 Build an interactive AI agent with chat interface and multiple tools",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "build_an_interactive_ai_agent_with_chat_interface_and_multiple_tools.json",
+    "relative_path": "01_ai_agents_and_swarms/build_an_interactive_ai_agent_with_chat_interface_and_multiple_tools.json",
+    "nodes": 17,
+    "active": false
+  },
+  {
+    "name": "[AI Agent] Jarvis: productivity AI agent for tasks, calendar, email & expense using MCPs",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "jarvis_productivity_ai_agent_for_tasks_calendar_email_expense_using_mcps.json",
+    "relative_path": "01_ai_agents_and_swarms/jarvis_productivity_ai_agent_for_tasks_calendar_email_expense_using_mcps.json",
+    "nodes": 52,
+    "active": false
+  },
+  {
+    "name": "[AI Agent] AI personal assistant for Google Tasks",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "ai_personal_assistant_for_google_tasks.json",
+    "relative_path": "01_ai_agents_and_swarms/ai_personal_assistant_for_google_tasks.json",
+    "nodes": 47,
+    "active": false
+  },
+  {
+    "name": "[AI Agent] AI Personal Assistant",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "ai_personal_assistant.json",
+    "relative_path": "01_ai_agents_and_swarms/ai_personal_assistant.json",
+    "nodes": 26,
+    "active": false
+  },
+  {
+    "name": "[AI Agent] Scrape, search and browse the web with a Firecrawl AI agent webhook",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "scrape_search_and_browse_the_web_with_a_firecrawl_ai_agent_webhook.json",
+    "relative_path": "01_ai_agents_and_swarms/scrape_search_and_browse_the_web_with_a_firecrawl_ai_agent_webhook.json",
+    "nodes": 21,
+    "active": false
+  },
+  {
+    "name": "[AI Agent] AI Assistant which answers questions with a RAG MCP and a Search Engine MCP",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "ai_assistant_which_answers_questions_with_a_rag_mcp_and_a_search_engine_mcp.json",
+    "relative_path": "01_ai_agents_and_swarms/ai_assistant_which_answers_questions_with_a_rag_mcp_and_a_search_engine_mcp.json",
+    "nodes": 10,
+    "active": false
+  },
+  {
+    "name": "[Multi Agent] Evaluate tool usage accuracy in multi-agent AI workflows using evaluation nodes",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "evaluate_tool_usage_accuracy_in_multi_agent_ai_workflows_using_evaluation_nodes.json",
+    "relative_path": "01_ai_agents_and_swarms/evaluate_tool_usage_accuracy_in_multi_agent_ai_workflows_using_evaluation_nodes.json",
+    "nodes": 15,
+    "active": false
+  },
+  {
+    "name": "[Multi Agent] Scalable multi-agent chat using @mentions",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "scalable_multi_agent_chat_using_mentions.json",
+    "relative_path": "01_ai_agents_and_swarms/scalable_multi_agent_chat_using_mentions.json",
+    "nodes": 18,
+    "active": false
+  },
+  {
+    "name": "[Multi Agent] Multi-Agent AI Clinic Management with WhatsApp, Telegram, and Google Calendar",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "multi_agent_ai_clinic_management_with_whatsapp_telegram_and_google_calendar.json",
+    "relative_path": "01_ai_agents_and_swarms/multi_agent_ai_clinic_management_with_whatsapp_telegram_and_google_calendar.json",
+    "nodes": 38,
+    "active": false
+  },
+  {
+    "name": "[Multi Agent] Creative design agency simulation with OpenAI O3 and GPT-4.1-mini multi-agent",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "creative_design_agency_simulation_with_openai_o3_and_gpt_41_mini_multi_agent.json",
+    "relative_path": "01_ai_agents_and_swarms/creative_design_agency_simulation_with_openai_o3_and_gpt_41_mini_multi_agent.json",
+    "nodes": 18,
+    "active": false
+  },
+  {
+    "name": "[RAG] RAG Starter Template using Simple Vector Stores, Form trigger and OpenAI",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "rag_starter_template_using_simple_vector_stores_form_trigger_and_openai.json",
+    "relative_path": "03_rag_and_knowledge_systems/rag_starter_template_using_simple_vector_stores_form_trigger_and_openai.json",
+    "nodes": 12,
+    "active": false
+  },
+  {
+    "name": "[RAG] Local chatbot with retrieval augmented generation (RAG)",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "local_chatbot_with_retrieval_augmented_generation_rag.json",
+    "relative_path": "03_rag_and_knowledge_systems/local_chatbot_with_retrieval_augmented_generation_rag.json",
+    "nodes": 13,
+    "active": false
+  },
+  {
+    "name": "[RAG] Build a PDF Document RAG System with Mistral OCR, Qdrant and Gemini AI",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "build_a_pdf_document_rag_system_with_mistral_ocr_qdrant_and_gemini_ai.json",
+    "relative_path": "03_rag_and_knowledge_systems/build_a_pdf_document_rag_system_with_mistral_ocr_qdrant_and_gemini_ai.json",
+    "nodes": 34,
+    "active": false
+  },
+  {
+    "name": "[RAG] Build a knowledge base chatbot with OpenAI, RAG and MongoDB vector embeddings",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "build_a_knowledge_base_chatbot_with_openai_rag_and_mongodb_vector_embeddings.json",
+    "relative_path": "03_rag_and_knowledge_systems/build_a_knowledge_base_chatbot_with_openai_rag_and_mongodb_vector_embeddings.json",
+    "nodes": 15,
+    "active": false
+  },
+  {
+    "name": "[RAG] Build and update RAG system with Google Drive, Qdrant, and Gemini Chat",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "build_and_update_rag_system_with_google_drive_qdrant_and_gemini_chat.json",
+    "relative_path": "03_rag_and_knowledge_systems/build_and_update_rag_system_with_google_drive_qdrant_and_gemini_chat.json",
+    "nodes": 29,
+    "active": false
+  },
+  {
+    "name": "[RAG] Answer multi-channel support queries with OpenAI RAG and Supabase",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "answer_multi_channel_support_queries_with_openai_rag_and_supabase.json",
+    "relative_path": "03_rag_and_knowledge_systems/answer_multi_channel_support_queries_with_openai_rag_and_supabase.json",
+    "nodes": 91,
+    "active": false
+  },
+  {
+    "name": "[RAG] Build an All-Source Knowledge Assistant with Claude, RAG, Perplexity, and Drive",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "build_an_all_source_knowledge_assistant_with_claude_rag_perplexity_and_drive.json",
+    "relative_path": "03_rag_and_knowledge_systems/build_an_all_source_knowledge_assistant_with_claude_rag_perplexity_and_drive.json",
+    "nodes": 40,
+    "active": false
+  },
+  {
+    "name": "[RAG] Company website chatbot agent (RAG, calendar integrations)",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "company_website_chatbot_agent_rag_calendar_integrations.json",
+    "relative_path": "01_ai_agents_and_swarms/company_website_chatbot_agent_rag_calendar_integrations.json",
+    "nodes": 8,
+    "active": false
+  },
+  {
+    "name": "[RAG] Build a PDF-based RAG system with OpenAI, Pinecone and Cohere reranking",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "build_a_pdf_based_rag_system_with_openai_pinecone_and_cohere_reranking.json",
+    "relative_path": "03_rag_and_knowledge_systems/build_a_pdf_based_rag_system_with_openai_pinecone_and_cohere_reranking.json",
+    "nodes": 14,
+    "active": false
+  },
+  {
+    "name": "[RAG] Local document question answering with Ollama AI, Agentic RAG & PGVector",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "local_document_question_answering_with_ollama_ai_agentic_rag_pgvector.json",
+    "relative_path": "01_ai_agents_and_swarms/local_document_question_answering_with_ollama_ai_agentic_rag_pgvector.json",
+    "nodes": 41,
+    "active": false
+  },
+  {
+    "name": "[Email] Gmail AI Email Manager",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "gmail_ai_email_manager.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/gmail_ai_email_manager.json",
+    "nodes": 8,
+    "active": false
+  },
+  {
+    "name": "[Email] Automate email filtering & AI summarization. 100% free & effective, works 7/24",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "automate_email_filtering_ai_summarization_100_free_effective_works_724.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/automate_email_filtering_ai_summarization_100_free_effective_works_724.json",
+    "nodes": 14,
+    "active": false
+  },
+  {
+    "name": "[Email] Email support agent w/ Gemini & GPT fallback using Gmail + Google Sheets",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "email_support_agent_w_gemini_gpt_fallback_using_gmail_google_sheets.json",
+    "relative_path": "01_ai_agents_and_swarms/email_support_agent_w_gemini_gpt_fallback_using_gmail_google_sheets.json",
+    "nodes": 11,
+    "active": false
+  },
+  {
+    "name": "[Email] Error handling: Send email via Gmail on execution or trigger-level errors",
+    "category": "06_production_health_and_monitoring",
+    "filename": "error_handling_send_email_via_gmail_on_execution_or_trigger_level_errors.json",
+    "relative_path": "06_production_health_and_monitoring/error_handling_send_email_via_gmail_on_execution_or_trigger_level_errors.json",
+    "nodes": 13,
+    "active": false
+  },
+  {
+    "name": "[Sales Email] Generate personalized sales emails with LinkedIn data & Claude 3.7 via OpenRouter",
+    "category": "04_content_and_autoposting",
+    "filename": "generate_personalized_sales_emails_with_linkedin_data_claude_37_via_openrouter.json",
+    "relative_path": "04_content_and_autoposting/generate_personalized_sales_emails_with_linkedin_data_claude_37_via_openrouter.json",
+    "nodes": 23,
+    "active": false
+  },
+  {
+    "name": "[WhatsApp] AI-powered WhatsApp chatbot for text, voice, images, and PDF with RAG",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "ai_powered_whatsapp_chatbot_for_text_voice_images_and_pdf_with_rag.json",
+    "relative_path": "03_rag_and_knowledge_systems/ai_powered_whatsapp_chatbot_for_text_voice_images_and_pdf_with_rag.json",
+    "nodes": 35,
+    "active": false
+  },
+  {
+    "name": "[Voice AI] Build a voice AI chatbot with ElevenLabs and InfraNodus knowledge experts",
+    "category": "05_messaging_and_voice_ai",
+    "filename": "build_a_voice_ai_chatbot_with_elevenlabs_and_infranodus_knowledge_experts.json",
+    "relative_path": "05_messaging_and_voice_ai/build_a_voice_ai_chatbot_with_elevenlabs_and_infranodus_knowledge_experts.json",
+    "nodes": 21,
+    "active": false
+  },
+  {
+    "name": "[Voice AI] Automated phone receptionist for scheduling with Twilio, ElevenLabs & Claude AI",
+    "category": "05_messaging_and_voice_ai",
+    "filename": "automated_phone_receptionist_for_scheduling_with_twilio_elevenlabs_claude_ai.json",
+    "relative_path": "05_messaging_and_voice_ai/automated_phone_receptionist_for_scheduling_with_twilio_elevenlabs_claude_ai.json",
+    "nodes": 14,
+    "active": false
+  },
+  {
+    "name": "[Content] \u2728\ud83e\udd16Automate Multi-Platform Social Media Content Creation with AI",
+    "category": "04_content_and_autoposting",
+    "filename": "automate_multi_platform_social_media_content_creation_with_ai.json",
+    "relative_path": "04_content_and_autoposting/automate_multi_platform_social_media_content_creation_with_ai.json",
+    "nodes": 57,
+    "active": false
+  },
+  {
+    "name": "[Content] AI-powered multi-social media post automation: Google Trends & Perplexity AI",
+    "category": "04_content_and_autoposting",
+    "filename": "ai_powered_multi_social_media_post_automation_google_trends_perplexity_ai.json",
+    "relative_path": "04_content_and_autoposting/ai_powered_multi_social_media_post_automation_google_trends_perplexity_ai.json",
+    "nodes": 18,
+    "active": false
+  },
+  {
+    "name": "[Content] Automated LinkedIn content creation with GPT-4 and DALL-E for scheduled posts",
+    "category": "04_content_and_autoposting",
+    "filename": "automated_linkedin_content_creation_with_gpt_4_and_dall_e_for_scheduled_posts.json",
+    "relative_path": "04_content_and_autoposting/automated_linkedin_content_creation_with_gpt_4_and_dall_e_for_scheduled_posts.json",
+    "nodes": 13,
+    "active": false
+  },
+  {
+    "name": "[Content] Build a weekly AI trend alerter with arXiv and Weaviate",
+    "category": "04_content_and_autoposting",
+    "filename": "build_a_weekly_ai_trend_alerter_with_arxiv_and_weaviate.json",
+    "relative_path": "04_content_and_autoposting/build_a_weekly_ai_trend_alerter_with_arxiv_and_weaviate.json",
+    "nodes": 46,
+    "active": false
+  },
+  {
+    "name": "[Content] Auto-generate SEO blog posts with Perplexity, GPT, Leonardo & WordPress",
+    "category": "04_content_and_autoposting",
+    "filename": "auto_generate_seo_blog_posts_with_perplexity_gpt_leonardo_wordpress.json",
+    "relative_path": "04_content_and_autoposting/auto_generate_seo_blog_posts_with_perplexity_gpt_leonardo_wordpress.json",
+    "nodes": 19,
+    "active": false
+  },
+  {
+    "name": "[Content] Build custom workflows automatically with GPT-4o, RAG, and web search",
+    "category": "03_rag_and_knowledge_systems",
+    "filename": "build_custom_workflows_automatically_with_gpt_4o_rag_and_web_search.json",
+    "relative_path": "03_rag_and_knowledge_systems/build_custom_workflows_automatically_with_gpt_4o_rag_and_web_search.json",
+    "nodes": 33,
+    "active": false
+  },
+  {
+    "name": "[Lead Gen] Lead generation agent",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "lead_generation_agent.json",
+    "relative_path": "01_ai_agents_and_swarms/lead_generation_agent.json",
+    "nodes": 20,
+    "active": false
+  },
+  {
+    "name": "[Lead Gen] LeadBot autopilot \u2014 chat-to-lead for Salesforce",
+    "category": "02_b2b_lead_engines_and_scraping",
+    "filename": "leadbot_autopilot_chat_to_lead_for_salesforce.json",
+    "relative_path": "02_b2b_lead_engines_and_scraping/leadbot_autopilot_chat_to_lead_for_salesforce.json",
+    "nodes": 21,
+    "active": false
+  },
+  {
+    "name": "[Lead Gen] Scrape Google Maps business leads with Apify & GPT-4 email extraction",
+    "category": "02_b2b_lead_engines_and_scraping",
+    "filename": "scrape_google_maps_business_leads_with_apify_gpt_4_email_extraction.json",
+    "relative_path": "02_b2b_lead_engines_and_scraping/scrape_google_maps_business_leads_with_apify_gpt_4_email_extraction.json",
+    "nodes": 17,
+    "active": false
+  },
+  {
+    "name": "[Competitive Intel] Automated competitor pricing monitor with Bright Data MCP & OpenAI",
+    "category": "06_production_health_and_monitoring",
+    "filename": "automated_competitor_pricing_monitor_with_bright_data_mcp_openai.json",
+    "relative_path": "06_production_health_and_monitoring/automated_competitor_pricing_monitor_with_bright_data_mcp_openai.json",
+    "nodes": 17,
+    "active": false
+  },
+  {
+    "name": "[Production] Error handling system with PostgreSQL logging and rate-limited notifications",
+    "category": "04_content_and_autoposting",
+    "filename": "error_handling_system_with_postgresql_logging_and_rate_limited_notifications.json",
+    "relative_path": "04_content_and_autoposting/error_handling_system_with_postgresql_logging_and_rate_limited_notifications.json",
+    "nodes": 16,
+    "active": false
+  },
+  {
+    "name": "[Production] Automated error handling with email alerts & smart workflow deactivation",
+    "category": "06_production_health_and_monitoring",
+    "filename": "automated_error_handling_with_email_alerts_smart_workflow_deactivation.json",
+    "relative_path": "06_production_health_and_monitoring/automated_error_handling_with_email_alerts_smart_workflow_deactivation.json",
+    "nodes": 29,
+    "active": false
+  },
+  {
+    "name": "[Document] Process large documents with OCR using SubworkflowAI and Gemini",
+    "category": "07_document_and_cv_intelligence",
+    "filename": "process_large_documents_with_ocr_using_subworkflowai_and_gemini.json",
+    "relative_path": "07_document_and_cv_intelligence/process_large_documents_with_ocr_using_subworkflowai_and_gemini.json",
+    "nodes": 16,
+    "active": false
+  },
+  {
+    "name": "[Document] AI resume screening with GPT-4o & error handling | Google Sheets & Drive flow",
+    "category": "06_production_health_and_monitoring",
+    "filename": "ai_resume_screening_with_gpt_4o_error_handling_google_sheets_drive_flow.json",
+    "relative_path": "06_production_health_and_monitoring/ai_resume_screening_with_gpt_4o_error_handling_google_sheets_drive_flow.json",
+    "nodes": 34,
+    "active": false
+  },
+  {
+    "name": "[Document] Screen and score candidate CVs with Google Gemini and Gmail",
+    "category": "07_document_and_cv_intelligence",
+    "filename": "screen_and_score_candidate_cvs_with_google_gemini_and_gmail.json",
+    "relative_path": "07_document_and_cv_intelligence/screen_and_score_candidate_cvs_with_google_gemini_and_gmail.json",
+    "nodes": 25,
+    "active": false
+  },
+  {
+    "name": "[Finance] Automated daily financial analysis from Loyverse POS with Google Sheets & email",
+    "category": "08_financial_and_market_intelligence",
+    "filename": "automated_daily_financial_analysis_from_loyverse_pos_with_google_sheets_email.json",
+    "relative_path": "08_financial_and_market_intelligence/automated_daily_financial_analysis_from_loyverse_pos_with_google_sheets_email.json",
+    "nodes": 21,
+    "active": false
+  },
+  {
+    "name": "[Finance] AI-driven inventory management with OpenAI forecasting & ERP integration",
+    "category": "08_financial_and_market_intelligence",
+    "filename": "ai_driven_inventory_management_with_openai_forecasting_erp_integration.json",
+    "relative_path": "08_financial_and_market_intelligence/ai_driven_inventory_management_with_openai_forecasting_erp_integration.json",
+    "nodes": 24,
+    "active": false
+  },
+  {
+    "name": "Project A1 \u2014 Vehicle Wraps Quote Pipeline",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "project_a1_vehicle_wraps_quote_pipeline.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/project_a1_vehicle_wraps_quote_pipeline.json",
+    "nodes": 10,
+    "active": true
+  },
+  {
+    "name": "n8n Daily Instance Health Monitor",
+    "category": "06_production_health_and_monitoring",
+    "filename": "n8n_daily_instance_health_monitor.json",
+    "relative_path": "06_production_health_and_monitoring/n8n_daily_instance_health_monitor.json",
+    "nodes": 10,
+    "active": true
+  },
+  {
+    "name": "Forced Failure Simulation Worker",
+    "category": "01_ai_agents_and_swarms",
+    "filename": "forced_failure_simulation_worker.json",
+    "relative_path": "01_ai_agents_and_swarms/forced_failure_simulation_worker.json",
+    "nodes": 2,
+    "active": false
+  },
+  {
+    "name": "My workflow 10",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_10.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_10.json",
+    "nodes": 2,
+    "active": false
+  },
+  {
+    "name": "My workflow 11",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_11.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_11.json",
+    "nodes": 0,
+    "active": false
+  },
+  {
+    "name": "My workflow 12",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_12.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_12.json",
+    "nodes": 2,
+    "active": false
+  },
+  {
+    "name": "PROJECT I2: Wraps Content Pattern Engine v1",
+    "category": "04_content_and_autoposting",
+    "filename": "project_i2_wraps_content_pattern_engine_v1.json",
+    "relative_path": "04_content_and_autoposting/project_i2_wraps_content_pattern_engine_v1.json",
+    "nodes": 18,
+    "active": true
+  },
+  {
+    "name": "MAK \u2014 Telegram Voice & Workflow Remote Controller v1.0",
+    "category": "05_messaging_and_voice_ai",
+    "filename": "mak_telegram_voice_workflow_remote_controller_v10.json",
+    "relative_path": "05_messaging_and_voice_ai/mak_telegram_voice_workflow_remote_controller_v10.json",
+    "nodes": 19,
+    "active": true
+  },
+  {
+    "name": "My workflow 13",
+    "category": "09_enterprise_blueprints_and_utilities",
+    "filename": "my_workflow_13.json",
+    "relative_path": "09_enterprise_blueprints_and_utilities/my_workflow_13.json",
+    "nodes": 2,
+    "active": false
+  }
+]

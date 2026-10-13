@@ -1,0 +1,176 @@
+{
+  "id": "workflow_1_nick_saraev",
+  "name": "Autonomous Outbound SDR Swarm and Lead Generation Engine",
+  "version": "1.0.0",
+  "author": "Nick Saraev (LeftClick.ai / Maker School)",
+  "classification": "Enterprise Multi Agent System",
+  "design_pattern": "DOE Framework (Directive, Orchestration, Execution)",
+  "target_industry": "B2B Technology, SaaS, and High Ticket Agencies",
+  "description": "Production grade autonomous SDR multi agent swarm that eliminates manual SDR prospecting. The system enriches nominative decision maker emails via waterfall verification, crawls prospect accounts via Firecrawl, synthesizes low ego Western founder copy adhering to the Nick Saraev 4 Pillar Protocol, and enforces an autonomous confidence evaluation gate before campaign staging.",
+  "tags": [
+    "langgraph",
+    "multi_agent",
+    "b2b_outbound",
+    "firecrawl",
+    "nick_saraev",
+    "doe_framework",
+    "autonomous_sdr",
+    "instantly"
+  ],
+  "runtime": {
+    "language": "python",
+    "min_version": "3.10",
+    "recommended_version": "3.13",
+    "framework": "LangGraph",
+    "dependencies": [
+      "langgraph>=1.2.0",
+      "langchain-core>=1.6.0",
+      "pydantic>=2.7.0",
+      "httpx>=0.28.0"
+    ]
+  },
+  "architecture": {
+    "directive_layer": {
+      "icp_rules": "B2B service providers, agencies, and enterprise software companies",
+      "copywriting_protocol": "Nick Saraev Low Ego Outbound Protocol (Pillars 1 to 4)",
+      "formatting_invariants": [
+        "Strict zero dash rule in all outreach copy",
+        "Lowercase casual subject lines of 2 to 4 words",
+        "Deliverability score must equal or exceed 0.90",
+        "Quality confidence score must reach 0.85 for automated dispatch"
+      ]
+    },
+    "orchestration_layer": {
+      "supervisor": "supervisor_node",
+      "state_management": "ProspectWorkflowState TypedDict",
+      "error_recovery": "Self annealing fallback loops with max retry threshold of 3",
+      "evaluation_gate": "evaluator_node with automated HITL staging for scores under 0.85"
+    },
+    "execution_layer": {
+      "worker_nodes": [
+        "enrichment_node",
+        "firecrawl_node",
+        "copywriter_node",
+        "evaluator_node",
+        "human_review_node",
+        "dispatcher_node"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "supervisor_node",
+      "name": "Cognitive Supervisor Router",
+      "type": "orchestrator",
+      "description": "Inspects shared workflow state and dynamically routes execution to specialized worker agents based on completion status and error thresholds.",
+      "inputs": ["ProspectWorkflowState"],
+      "outputs": ["status update"],
+      "retry_policy": {
+        "max_retries": 3,
+        "fallback_status": "FAILED"
+      }
+    },
+    {
+      "id": "enrichment_node",
+      "name": "Nominative Waterfall Enrichment Agent",
+      "type": "worker",
+      "description": "Performs multi tier email resolution via MX lookup, Anymailfinder API, and intelligent corporate nominative heuristic fallbacks.",
+      "inputs": ["company_name", "website_url", "decision_maker_name"],
+      "outputs": ["verified_email", "deliverability_score", "enrichment_source", "is_deliverable"],
+      "external_apis": ["Anymailfinder API", "DNS MX Resolver"]
+    },
+    {
+      "id": "firecrawl_node",
+      "name": "Firecrawl Account Enrichment and Deep Research Agent",
+      "type": "worker",
+      "description": "Crawls target website home, about, and case studies pages to extract commercial offerings, hiring signals, and operational bottlenecks.",
+      "inputs": ["company_name", "website_url", "target_niche"],
+      "outputs": ["core_offering", "detected_bottleneck", "key_achievements", "tech_stack_signals", "crawled_summary"],
+      "external_apis": ["Firecrawl Scrape API"]
+    },
+    {
+      "id": "copywriter_node",
+      "name": "Low Ego Copywriting Synthesizer Agent",
+      "type": "worker",
+      "description": "Transforms account intelligence into high converting outbound emails applying Nick Saraev's 4 psychological pillars with strict zero dash compliance.",
+      "inputs": ["decision_maker_name", "company_name", "detected_bottleneck"],
+      "outputs": ["drafted_subject", "drafted_body", "hook_angle"],
+      "models": ["Claude 3.5 Sonnet", "Rule Engine Synthesizer"]
+    },
+    {
+      "id": "evaluator_node",
+      "name": "Quality Evaluator and Confidence Gate Agent",
+      "type": "evaluator",
+      "description": "Evaluates outbound email across relevance, tone authenticity, deliverability score, and zero dash compliance. Scores between 0.0 and 1.0.",
+      "inputs": ["drafted_subject", "drafted_body", "verified_email", "deliverability_score"],
+      "outputs": ["confidence_score", "dash_check_passed", "evaluation_rationale", "hitl_approved"],
+      "thresholds": {
+        "auto_approve_min": 0.85
+      }
+    },
+    {
+      "id": "human_review_node",
+      "name": "Human In The Loop Exception Handler",
+      "type": "human_gate",
+      "description": "Stages low confidence or flagged drafts into an exception queue for manual human inspection and edits.",
+      "inputs": ["company_name", "confidence_score", "evaluation_rationale"],
+      "outputs": ["review_notes", "status: PENDING_HUMAN_REVIEW"]
+    },
+    {
+      "id": "dispatcher_node",
+      "name": "Campaign Dispatcher and CRM Staging Agent",
+      "type": "worker",
+      "description": "Pushes approved leads with custom variables directly into active sending campaigns via Instantly or Smartlead API.",
+      "inputs": ["verified_email", "company_name", "drafted_subject", "drafted_body"],
+      "outputs": ["dispatch_status", "campaign_id", "status: DISPATCHED"],
+      "external_apis": ["Instantly.ai REST API", "Smartlead.ai REST API"]
+    }
+  ],
+  "environment_variables": {
+    "required": [],
+    "optional": [
+      {
+        "key": "FIRECRAWL_API_KEY",
+        "description": "Firecrawl API key for autonomous web crawling and markdown extraction"
+      },
+      {
+        "key": "ANYMAILFINDER_API_KEY",
+        "description": "Anymailfinder API key for deliverable email resolution"
+      },
+      {
+        "key": "ANTHROPIC_API_KEY",
+        "description": "Anthropic API key for Claude 3.5 Sonnet reasoning"
+      },
+      {
+        "key": "INSTANTLY_API_KEY",
+        "description": "Instantly API key for cold email campaign injection"
+      },
+      {
+        "key": "DEFAULT_CAMPAIGN_ID",
+        "description": "Target cold email campaign identifier",
+        "default": "camp_saraev_sdr_01"
+      }
+    ]
+  },
+  "copywriting_framework": {
+    "author_origin": "Nick Saraev",
+    "pillars": {
+      "pillar_1": "Prove competence immediately by demonstrating a specific mechanism or operational flow.",
+      "pillar_2": "Frame high status abundance: frankly I am drowning in opportunities right now and wondering if you were open to taking some of these on.",
+      "pillar_3": "Present an irresistible zero risk offer: wouldn't cost you anything, I would do all the configuration upfront.",
+      "pillar_4": "Execute a soft, non pushy close: if this is not the right fit no hard feelings at all, just wanted to put that out there. Let me know."
+    },
+    "style_guidelines": [
+      "Strict zero dash rule in all prose text",
+      "Lowercase casual subject line of 2 to 4 words",
+      "Conversational, understated Western founder voice",
+      "Eliminate corporate buzzwords and artificial sycophancy"
+    ]
+  },
+  "performance_benchmarks": {
+    "cost_per_lead_run": "$0.02 to $0.05",
+    "deliverability_target": "99%+",
+    "target_appointment_yield": "15 to 20 qualified sales calls per week",
+    "recommended_inbox_throttle": "30 to 50 emails per custom domain per day"
+  }
+}

@@ -1,0 +1,313 @@
+{
+  "updatedAt": "2026-09-10T00:08:55.496Z",
+  "createdAt": "2026-09-09T23:57:54.348Z",
+  "id": "Zjz1vOO5Dq3p7uQf",
+  "name": "Autonomous B2B Lead Enrichment & Outreach Engine",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-incoming",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1504,
+        384
+      ],
+      "id": "a693e38a-7735-4778-9070-4b7dc26c9eb0",
+      "webhookId": "5086aab5-f34f-4e2c-8e2b-274b0f6a7d40"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.data.emails.length > 0}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Email Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        384
+      ],
+      "id": "989f97e7-4780-4350-bf83-27bf476dfae2"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "=Lead failed to enrich: {{$node[\"Webhook Trigger\"].json[\"body\"][\"domain\"]}}",
+        "additionalFields": {}
+      },
+      "name": "Telegram (Failure Alert)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        -848,
+        560
+      ],
+      "id": "39159806-4738-4de3-bbc8-a6f34f149056",
+      "webhookId": "f10f745c-1134-4a07-9b82-407f2c97db04"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key=YOUR_GEMINI_API_KEY",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "contents",
+              "value": "={{ [ { \"parts\": [ { \"text\": \"Write a strict, 2-sentence, hyper-personalized B2B icebreaker about this company based on their description: \" + ($json.data.organization || $json.data.domain) } ] } ] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Gemini AI Brain",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -848,
+        240
+      ],
+      "id": "4eee7e68-c29b-425e-b252-d4bf458cff5f"
+    },
+    {
+      "parameters": {
+        "jsCode": "const hunterData = $node[\"Hunter.io Enrichment\"].json.data;\nconst webhookBody = $node[\"Webhook Trigger\"].json.body;\n\n// Extract the first email from Hunter\nconst targetEmail = hunterData.emails[0].value;\n\n// Parse Gemini output (handling the nested JSON response)\nlet icebreaker = \"\";\ntry {\n  icebreaker = $input.item.json.candidates[0].content.parts[0].text;\n} catch(e) {\n  icebreaker = \"I loved learning about what you are building.\"; // Fallback\n}\n\n// Format and return clean JSON payload\nreturn {\n  email: targetEmail,\n  name: webhookBody.name,\n  domain: webhookBody.domain,\n  icebreaker: icebreaker.trim()\n};"
+      },
+      "name": "Payload Formatting",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        240
+      ],
+      "id": "af5879bc-4bae-417d-b0c8-6cfb4cda7fb9"
+    },
+    {
+      "parameters": {
+        "operation": "lookup",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SHEET_ID",
+          "mode": "id"
+        }
+      },
+      "name": "State Check (Sheets)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        -416,
+        240
+      ],
+      "id": "a6fd7bc9-d854-47ed-9f13-cca393126e1d"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$json.row_number !== undefined}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "Deduplication Gate",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        240
+      ],
+      "id": "9e485593-909a-41f2-acb7-95fe67b7f87f"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{$node[\"Payload Formatting\"].json[\"email\"]}}",
+        "subject": "Quick question about {{$node[\"Payload Formatting\"].json[\"domain\"]}}",
+        "message": "=Hi {{$node[\"Payload Formatting\"].json[\"name\"]}},\n\n{{$node[\"Payload Formatting\"].json[\"icebreaker\"]}}\n\nAre you open to a quick chat next week?\n\nBest,\nIdrees",
+        "options": {}
+      },
+      "name": "Gmail Execution",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        352
+      ],
+      "id": "3225a6c6-1187-4824-95b5-03a4513de677",
+      "webhookId": "07da3f9f-8ac3-4880-8763-c57f248794e0"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{$node[\"Payload Formatting\"].json[\"email\"]}}",
+            "Name": "={{$node[\"Payload Formatting\"].json[\"name\"]}}",
+            "Domain": "={{$node[\"Payload Formatting\"].json[\"domain\"]}}",
+            "Status": "Sent"
+          }
+        },
+        "options": {}
+      },
+      "name": "Log Success (Sheets)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        256,
+        352
+      ],
+      "id": "331e6074-5ffd-4413-bc9f-51f38ba77228"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Email Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Exists?": {
+      "main": [
+        [
+          {
+            "node": "Gemini AI Brain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram (Failure Alert)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini AI Brain": {
+      "main": [
+        [
+          {
+            "node": "Payload Formatting",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Payload Formatting": {
+      "main": [
+        [
+          {
+            "node": "State Check (Sheets)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "State Check (Sheets)": {
+      "main": [
+        [
+          {
+            "node": "Deduplication Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deduplication Gate": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Gmail Execution",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Execution": {
+      "main": [
+        [
+          {
+            "node": "Log Success (Sheets)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": null,
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "c80b4cb4-d22e-4c1e-87a1-36dfda29c791",
+  "activeVersionId": null,
+  "versionCounter": 12,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-09T23:57:54.357Z",
+      "createdAt": "2026-09-09T23:57:54.357Z",
+      "role": "workflow:owner",
+      "workflowId": "Zjz1vOO5Dq3p7uQf",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

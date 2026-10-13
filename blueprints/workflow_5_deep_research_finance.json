@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "id": "workflow_5_deep_research_finance",
+  "name": "Autonomous Financial Deep Research & Intelligence Blueprint",
+  "version": "1.0.0",
+  "domain": "Institutional Equity Research & Regulatory Compliance",
+  "authorities": [
+    "Lance Martin (LangChain ML Engineer)",
+    "Harrison Chase (LangChain CEO)",
+    "Ed Donner (Former Managing Director JPMorgan Chase, AI Engineering Instructor)"
+  ],
+  "canonical_references": [
+    "langchain-ai/open_deep_research",
+    "langchain-ai/langgraph",
+    "Latent Space: Context Engineering for Deep Agents",
+    "Ed Donner Financial Agent Blueprints"
+  ],
+  "description": "Production-grade autonomous financial research agent. Combines LangGraph dynamic Send API fan-out, Docling table-preserving chunking, hybrid dense/BM25 retrieval, an AST-checked deterministic Python execution sandbox for zero-hallucination math, and an adversarial compliance critic.",
+  "workflow_graph": {
+    "engine": "LangGraph",
+    "state_schema": "FinancialResearchState",
+    "entry_point": "planner",
+    "nodes": [
+      {
+        "id": "planner",
+        "name": "Query Decomposition & Planning Node",
+        "description": "Deconstructs high-level investment thesis into parallel typed micro-tasks across quantitative statements, MD&A qualitative narratives, and risk factors."
+      },
+      {
+        "id": "retrieval_worker_node",
+        "name": "Dynamic Hybrid Retrieval Worker",
+        "description": "Dynamically spawned via Send API. Executes hybrid dense semantic search and BM25 sparse keyword matching over Docling-parsed SEC filings and earnings transcripts."
+      },
+      {
+        "id": "deterministic_math",
+        "name": "Deterministic Quantitative Python Sandbox",
+        "description": "AST-restricted execution environment computing FCF, YoY growth, CAGR, net debt, and solvency ratios using Decimal precision with SHA-256 audit trails."
+      },
+      {
+        "id": "synthesis",
+        "name": "Lead Financial Dossier Synthesis Node",
+        "description": "Drafts structured institutional research dossier with inline citations and audited markdown performance tables."
+      },
+      {
+        "id": "critic",
+        "name": "Adversarial Compliance & Grounding Critic",
+        "description": "Cross-examines draft against raw filing citations and verified calculation logs. Rejects drafts with arithmetic divergence or ungrounded claims."
+      }
+    ],
+    "conditional_edges": [
+      {
+        "source": "planner",
+        "router": "dispatch_subtasks",
+        "primitive": "langgraph.types.Send",
+        "destinations": ["retrieval_worker_node"]
+      },
+      {
+        "source": "critic",
+        "router": "should_continue_or_finalize",
+        "destinations": {
+          "finalize": "__END__",
+          "replan": "planner"
+        }
+      }
+    ]
+  },
+  "ingestion_and_chunking": {
+    "parser": "Docling",
+    "table_aware": true,
+    "strategy": "Structural Markdown Matrix Preservation",
+    "target_sections": [
+      "Item 1A: Risk Factors",
+      "Item 7: Management Discussion and Analysis (MD&A)",
+      "Item 8: Financial Statements and Supplementary Data",
+      "Executive Q&A Earnings Call Transcripts"
+    ],
+    "footnote_retention": true
+  },
+  "retrieval_configuration": {
+    "hybrid_search": true,
+    "dense_vector_store": "pgvector / ChromaDB",
+    "sparse_keyword_index": "BM25",
+    "bm25_parameters": {
+      "k1": 1.5,
+      "b": 0.75
+    },
+    "rank_fusion": "Reciprocal Rank Fusion (RRF)",
+    "top_k_per_worker": 2
+  },
+  "deterministic_math_sandbox": {
+    "ast_inspection": true,
+    "allowed_modules": ["math", "decimal", "json", "pandas", "numpy"],
+    "banned_functions": [
+      "eval", "exec", "open", "compile", "globals", "locals",
+      "getattr", "setattr", "delattr", "__import__", "breakpoint",
+      "exit", "quit", "input"
+    ],
+    "banned_attributes": [
+      "__class__", "__subclasses__", "__bases__", "__globals__",
+      "__code__", "__dict__", "__module__", "__builtins__"
+    ],
+    "precision_engine": "Decimal (ROUND_HALF_UP)",
+    "cryptographic_verification": "SHA-256",
+    "metrics_supported": [
+      "Free Cash Flow (FCF)",
+      "FCF Margin (%)",
+      "Revenue YoY Growth (%)",
+      "Compound Annual Growth Rate (CAGR)",
+      "Net Debt",
+      "Net Debt to EBITDA Leverage",
+      "Net Income YoY Growth (%)"
+    ]
+  },
+  "adversarial_critic": {
+    "max_iterations": 3,
+    "arithmetic_divergence_tolerance_pct": 0.0001,
+    "verbatim_citation_required": true,
+    "zero_hallucination_rule": true
+  },
+  "environment": {
+    "python_runtime": ">=3.10",
+    "dependencies": {
+      "core": ["pydantic", "typing-extensions"],
+      "orchestration": ["langgraph"],
+      "quant": ["pandas", "numpy"]
+    },
+    "standalone_fallback_supported": true
+  }
+}

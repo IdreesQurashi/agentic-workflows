@@ -25,3 +25,17 @@ Thumbs.db
 .vscode/
 .idea/
 .mcp.json
+.wrangler/
+
+# Large binaries, zip archives, and raw data dumps
+*.zip
+*.tar.gz
+*.csv
+*.sqlite
+raw_posts.json
+pattern_analysis.json
+PROJECT_I2_*
+directives/screenshots/
+epaper_autopublisher_standalone_export/
+portal/
+portfolio/

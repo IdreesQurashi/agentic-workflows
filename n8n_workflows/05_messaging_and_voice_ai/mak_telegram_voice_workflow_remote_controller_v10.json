@@ -1,0 +1,792 @@
+{
+  "updatedAt": "2026-09-27T04:36:47.345Z",
+  "createdAt": "2026-09-27T03:39:52.333Z",
+  "id": "R7Citoj4RxstwsT7",
+  "name": "MAK \u2014 Telegram Voice & Workflow Remote Controller v1.0",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "id": "node-tg-trigger",
+      "name": "Telegram Inbound Trigger",
+      "webhookId": "mak-tg-remote-controller-v1",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        304
+      ],
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "e8R5nfthjmO3nQpL",
+          "name": "n8nadministrator"
+        }
+      }
+    },
+    {
+      "id": "node-auth-gate",
+      "name": "Security & Type Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -256,
+        304
+      ],
+      "parameters": {
+        "jsCode": "// Security Gate: Verify Telegram Sender Identity\nconst msg = $input.first().json.message || {};\nconst senderId = String(msg.from?.id || msg.chat?.id || \"\");\nconst senderName = msg.from?.first_name || msg.from?.username || \"Unknown\";\n\n// Whitelist of authorized Telegram Chat IDs (Your ID: 8590198563)\nconst allowedIds = [\"8590198563\"];\n\n// Check whitelist authorization\nconst isAuthorized = allowedIds.length === 0 || allowedIds.includes(senderId);\n\nconst isVoice = Boolean(msg.voice || msg.audio);\nconst isText = Boolean(msg.text);\nconst fileId = msg.voice?.file_id || msg.audio?.file_id || null;\nconst rawText = msg.text || msg.caption || \"\";\nconst chatId = msg.chat?.id || msg.from?.id;\n\nreturn [{\n  json: {\n    isAuthorized,\n    senderId,\n    senderName,\n    chatId,\n    isVoice,\n    isText,\n    fileId,\n    rawText,\n    receivedAt: new Date().toISOString()\n  }\n}];"
+      }
+    },
+    {
+      "id": "node-check-auth",
+      "name": "Is Authorized User?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -64,
+        304
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond_is_auth",
+              "leftValue": "={{ $json.isAuthorized }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "node-tg-reject",
+      "name": "Reject Unauthorized User",
+      "webhookId": "8f064a3a-afd7-4c63-9660-3f273dc103ab",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        480
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "\u26d4 Access Denied: Unauthorized Telegram user ID. Please contact system administrator to register your Telegram account ID.",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "e8R5nfthjmO3nQpL",
+          "name": "n8nadministrator"
+        }
+      }
+    },
+    {
+      "id": "node-check-voice",
+      "name": "Is Voice Note?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        224
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond_is_voice",
+              "leftValue": "={{ $json.isVoice }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "node-tg-getfile",
+      "name": "Get Telegram Voice File",
+      "webhookId": "61892085-ac2e-4d6a-9d27-36899866a132",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        128
+      ],
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.fileId }}",
+        "additionalFields": {}
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "e8R5nfthjmO3nQpL",
+          "name": "n8nadministrator"
+        }
+      }
+    },
+    {
+      "id": "node-unify-input",
+      "name": "Unify Command Text",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        896,
+        240
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cmd-1",
+              "name": "commandText",
+              "value": "={{ $json.content?.parts?.[0]?.audioTranscription?.text?.trim() || $json.content?.parts?.[0]?.text?.trim() || $json.text?.trim() || $json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || $('Security & Type Gate').item.json.rawText || 'voice memo received' }}",
+              "type": "string"
+            },
+            {
+              "id": "cmd-2",
+              "name": "chatId",
+              "value": "={{ $('Security & Type Gate').item.json.chatId }}",
+              "type": "number"
+            },
+            {
+              "id": "cmd-3",
+              "name": "sourceMode",
+              "value": "={{ $('Security & Type Gate').item.json.isVoice ? 'voice_memo' : 'text_command' }}",
+              "type": "string"
+            },
+            {
+              "id": "cmd-4",
+              "name": "senderName",
+              "value": "={{ $('Security & Type Gate').item.json.senderName }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "node-ai-decision-engine",
+      "name": "AI Decision Engine",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1500,
+      "onError": "continueRegularOutput",
+      "position": [
+        1104,
+        240
+      ],
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-flash-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-flash-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.commandText && $json.commandText.trim().length > 0 ? $json.commandText : 'Check system health and status' }}"
+            }
+          ]
+        },
+        "options": {
+          "systemMessage": "You are MAK Operational AI Controller. Analyze the user command or voice transcription.\nCategorize into exactly one intent:\n1. \"run_workflow\": User wants to run/trigger an automation.\n   Registered workflows:\n   - \"health_monitor\": \"n8n Daily Health Monitor\" (keywords: health, check, status of vps) -> webhook: http://localhost:5678/webhook/n8n-health-check\n   - \"backup_engine\": \"Pre-Update Automated Backup\" (keywords: backup, export, snapshot) -> webhook: http://localhost:5678/webhook/trigger-pre-update-backup\n   - \"jev_router\": \"Router Shell v1\" (keywords: jev router, router shell, queue) -> webhook: http://localhost:5678/webhook/router-v1\n   - \"eod_digest\": \"EOD Scorecard Digest\" (keywords: digest, scorecard, eod report) -> webhook: http://localhost:5678/webhook/eod-scorecard-digest\n2. \"query_status\": User wants to see recent executions, workflow failures, or general system health history.\n3. \"second_brain_capture\": Any business task, idea, decision, or note.\n   captureType: \"TASK\" | \"DECISION\" | \"IDEA\" | \"NOTE\"\n\nReturn strictly valid JSON only without markdown formatting:\n{\n  \"intent\": \"run_workflow\" | \"query_status\" | \"second_brain_capture\",\n  \"targetWorkflow\": { \"id\": \"...\", \"name\": \"...\", \"webhookUrl\": \"...\" } or null,\n  \"captureType\": \"TASK\" | \"DECISION\" | \"IDEA\" | \"NOTE\",\n  \"parsedTitle\": \"Short title max 8 words\",\n  \"summary\": \"Clean description of the task or request\"\n}"
+        }
+      },
+      "credentials": {
+        "googlePalmApi": {
+          "id": "6sn5MED12JGuINNq",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "id": "node-unpack-ai-decision",
+      "name": "Unpack AI Decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        240
+      ],
+      "parameters": {
+        "jsCode": "const unify = $('Unify Command Text').item.json;\nconst rawItem = $input.first().json;\nlet rawText = rawItem.mergedResponse || rawItem.content?.parts?.[0]?.text || rawItem.text || '';\n\nrawText = rawText.replace(/```json\\s*/gi, '').replace(/```\\s*/g, '').trim();\n\nlet ai = {};\nif (rawText) {\n  try {\n    ai = JSON.parse(rawText);\n  } catch (e) {}\n}\n\nif (!ai.intent) {\n  const text = (unify.commandText || '').toLowerCase();\n  if (text.includes('health') || text.includes('backup') || text.includes('router') || text.includes('digest')) {\n    let wf = null;\n    if (text.includes('health')) wf = { id: 'health_monitor', name: 'n8n Daily Health Monitor', webhookUrl: 'http://localhost:5678/webhook/n8n-health-check' };\n    else if (text.includes('backup')) wf = { id: 'backup_engine', name: 'Pre-Update Automated Backup', webhookUrl: 'http://localhost:5678/webhook/trigger-pre-update-backup' };\n    else if (text.includes('router')) wf = { id: 'jev_router', name: 'Router Shell v1', webhookUrl: 'http://localhost:5678/webhook/router-v1' };\n    else if (text.includes('digest')) wf = { id: 'eod_digest', name: 'EOD Scorecard Digest', webhookUrl: 'http://localhost:5678/webhook/eod-scorecard-digest' };\n    ai = { intent: 'run_workflow', targetWorkflow: wf, captureType: 'TASK', parsedTitle: unify.commandText.slice(0, 50), summary: unify.commandText };\n  } else if (text.includes('status') || text.includes('execution') || text.includes('history') || text.includes('vps')) {\n    ai = { intent: 'query_status', captureType: 'NOTE', parsedTitle: 'System Status Query', summary: unify.commandText };\n  } else {\n    let cat = 'NOTE';\n    if (text.startsWith('task:') || text.includes('task ') || text.includes('todo') || text.includes('follow up')) cat = 'TASK';\n    else if (text.startsWith('idea:') || text.includes('idea ') || text.includes('brainstorm')) cat = 'IDEA';\n    else if (text.startsWith('decision:') || text.includes('decision ') || text.includes('agreed')) cat = 'DECISION';\n    ai = { intent: 'second_brain_capture', captureType: cat, parsedTitle: unify.commandText.slice(0, 50), summary: unify.commandText };\n  }\n}\n\nreturn [{\n  json: {\n    commandText: unify.commandText,\n    chatId: unify.chatId,\n    sourceMode: unify.sourceMode,\n    senderName: unify.senderName,\n    intent: ai.intent || 'second_brain_capture',\n    targetWorkflow: ai.targetWorkflow || null,\n    captureType: ai.captureType || 'NOTE',\n    parsedTitle: ai.parsedTitle || unify.commandText.slice(0, 50),\n    summary: ai.summary || unify.commandText,\n    processedAt: new Date().toISOString()\n  }\n}];"
+      }
+    },
+    {
+      "id": "node-intent-switch",
+      "name": "Route by Action Intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1632,
+        224
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "run_workflow",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "query_status",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.intent }}",
+                    "rightValue": "second_brain_capture",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "node-check-workflow-found",
+      "name": "Known Workflow Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2016,
+        80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond_has_target_wf",
+              "leftValue": "={{ Boolean($json.targetWorkflow) }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "node-trigger-workflow-webhook",
+      "name": "Dispatch Workflow Execution",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "onError": "continueRegularOutput",
+      "position": [
+        2256,
+        16
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.targetWorkflow.webhookUrl }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "triggered_by",
+              "value": "MAK Telegram Remote Controller"
+            },
+            {
+              "name": "source_mode",
+              "value": "={{ $json.sourceMode }}"
+            },
+            {
+              "name": "raw_command",
+              "value": "={{ $json.commandText }}"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $json.processedAt }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      }
+    },
+    {
+      "id": "node-format-success-msg",
+      "name": "Format Trigger Success Card",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2480,
+        16
+      ],
+      "parameters": {
+        "jsCode": "const prev = $('Unpack AI Decision').item.json;\n\nconst text = `\u26a1 *WORKFLOW TRIGGERED SUCCESS*\\n\\n` +\n  `\ud83c\udfaf *Workflow:* ${prev.targetWorkflow ? prev.targetWorkflow.name : 'Requested Automation'}\\n` +\n  `\ud83c\udf99 *Input Mode:* ${prev.sourceMode === 'voice_memo' ? 'Voice Memo' : 'Text Command'}\\n` +\n  `\ud83d\udcdd *Original Ask:* \\\"${prev.commandText}\\\"\\n` +\n  `\u23f1 *Executed At:* ${new Date().toLocaleTimeString('en-US', { timeZone: 'America/Chicago' })} Houston Time\\n` +\n  `\ud83d\udfe2 *Status:* Webhook dispatched successfully\\n\\n` +\n  `_Remote control execution complete._`;\n\nreturn [{ json: { chatId: prev.chatId, message: text } }];"
+      }
+    },
+    {
+      "id": "node-format-unknown-wf",
+      "name": "Format Unknown Workflow Card",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2288,
+        208
+      ],
+      "parameters": {
+        "jsCode": "const prev = $('Unpack AI Decision').item.json;\n\nconst text = `\u26a0\ufe0f *WORKFLOW NOT RECOGNIZED*\\n\\n` +\n  `I heard: \\\"${prev.commandText}\\\"\\n\\n` +\n  `Available registered workflows to run:\\n` +\n  `\u2022 *Health Monitor* (\\\"run health check\\\")\\n` +\n  `\u2022 *Backup Engine* (\\\"run backup\\\")\\n` +\n  `\u2022 *Jev Router* (\\\"run jev router\\\")\\n` +\n  `\u2022 *EOD Digest* (\\\"run scorecard digest\\\")\\n\\n` +\n  `_Speak or type one of the registered workflow names._`;\n\nreturn [{ json: { chatId: prev.chatId, message: text } }];"
+      }
+    },
+    {
+      "id": "node-get-executions-api",
+      "name": "Query n8n Executions API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2016,
+        240
+      ],
+      "parameters": {
+        "url": "http://localhost:5678/api/v1/executions?limit=5",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JFotKZuw8h3umatp",
+          "name": "Local n8n Public API"
+        }
+      }
+    },
+    {
+      "id": "node-format-status-msg",
+      "name": "Format Status Query Card",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        512
+      ],
+      "parameters": {
+        "jsCode": "const prev = $('Unpack AI Decision').item.json;\nconst execData = $input.first().json.data || [];\n\nconst lines = execData.slice(0, 5).map(e => {\n  const statusEmoji = e.status === 'success' ? '\ud83d\udfe2' : e.status === 'running' ? '\ud83d\udfe1' : '\ud83d\udd34';\n  const mode = e.mode || 'webhook';\n  return `${statusEmoji} *#${e.id}* \u2014 ${e.status.toUpperCase()} (${mode})`;\n}).join('\\n') || '\u2022 No recent execution records found.';\n\nconst text = `\ud83d\udcca *N8N SYSTEM RECENT EXECUTIONS*\\n\\n` +\n  `${lines}\\n\\n` +\n  `Host: \\`localhost:5678\\`\\n` +\n  `Checked at: ${new Date().toLocaleTimeString('en-US', { timeZone: 'America/Chicago' })} CDT`;\n\nreturn [{ json: { chatId: prev.chatId, message: text } }];"
+      }
+    },
+    {
+      "id": "node-format-2nd-brain",
+      "name": "Process 2nd Brain Entry",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        400
+      ],
+      "parameters": {
+        "jsCode": "const prev = $input.first().json;\n\nconst text = `\ud83e\udde0 *SAVED TO MAK 2ND BRAIN*\\n\\n` +\n  `\ud83d\udcc1 *Category:* ${prev.captureType}\\n` +\n  `\ud83d\udccc *Title:* ${prev.parsedTitle}\\n` +\n  `\ud83c\udf99 *Captured via:* ${prev.sourceMode === 'voice_memo' ? 'Telegram Voice Memo' : 'Telegram Text'}\\n` +\n  `\ud83d\udcdd *Summary:*\\n\\\"${prev.summary || prev.commandText}\\\"\\n\\n` +\n  `_Logged to memory store. Ready for triage._`;\n\nreturn [{ json: { chatId: prev.chatId, message: text } }];"
+      }
+    },
+    {
+      "id": "node-tg-send-reply",
+      "name": "Send Telegram Confirmation",
+      "webhookId": "74c0e53a-158a-464d-854e-1fad30508885",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2736,
+        224
+      ],
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "credentials": {
+        "telegramApi": {
+          "id": "e8R5nfthjmO3nQpL",
+          "name": "n8nadministrator"
+        }
+      }
+    },
+    {
+      "id": "624c4980-220a-47e8-a66b-898c61afb266",
+      "name": "Transcribe a recording",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        128
+      ],
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-transcribe",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-transcribe"
+        },
+        "inputType": "binary",
+        "options": {}
+      },
+      "credentials": {
+        "googlePalmApi": {
+          "id": "6sn5MED12JGuINNq",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Inbound Trigger": {
+      "main": [
+        [
+          {
+            "node": "Security & Type Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Security & Type Gate": {
+      "main": [
+        [
+          {
+            "node": "Is Authorized User?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Authorized User?": {
+      "main": [
+        [
+          {
+            "node": "Is Voice Note?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject Unauthorized User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Voice Note?": {
+      "main": [
+        [
+          {
+            "node": "Get Telegram Voice File",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Unify Command Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Telegram Voice File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unify Command Text": {
+      "main": [
+        [
+          {
+            "node": "AI Decision Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action Intent": {
+      "main": [
+        [
+          {
+            "node": "Known Workflow Found?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Query n8n Executions API",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process 2nd Brain Entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Known Workflow Found?": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Workflow Execution",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format Unknown Workflow Card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dispatch Workflow Execution": {
+      "main": [
+        [
+          {
+            "node": "Format Trigger Success Card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Trigger Success Card": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Unknown Workflow Card": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query n8n Executions API": {
+      "main": [
+        [
+          {
+            "node": "Format Status Query Card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Status Query Card": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process 2nd Brain Entry": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Unify Command Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Decision Engine": {
+      "main": [
+        [
+          {
+            "node": "Unpack AI Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unpack AI Decision": {
+      "main": [
+        [
+          {
+            "node": "Route by Action Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "binaryMode": "separate",
+    "saveExecutionProgress": true,
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "2cb48718-c55e-4d92-9729-4adcf407880b",
+  "activeVersionId": "2cb48718-c55e-4d92-9729-4adcf407880b",
+  "versionCounter": 73,
+  "triggerCount": 1,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-09-27T03:39:52.338Z",
+      "createdAt": "2026-09-27T03:39:52.338Z",
+      "role": "workflow:owner",
+      "workflowId": "R7Citoj4RxstwsT7",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}

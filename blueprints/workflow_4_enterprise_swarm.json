@@ -1,0 +1,149 @@
+{
+  "blueprint_id": "workflow_4_enterprise_swarm",
+  "name": "Enterprise Customer Operations & Intelligent Triage Swarm",
+  "version": "1.0.0",
+  "created_at": "2026-09-07T03:55:00Z",
+  "authors": [
+    "Matthew Berman (Forward Future)",
+    "Liam Ottley (Morningside AI)",
+    "Enki Enterprise Swarm Architect"
+  ],
+  "description": "Production grade multi-agent customer operations swarm featuring cognitive intent triage, synchronous VIP CRM acceleration, domain-isolated specialist sub-agents, deterministic action gating, and Human-in-the-Loop Slack Block Kit approval interrupts.",
+  "target_frameworks": [
+    "LangGraph 0.2+",
+    "FastAPI",
+    "PostgreSQL 16",
+    "Slack Block Kit",
+    "Stripe Python SDK"
+  ],
+  "architecture_pillars": {
+    "ingestion_gateway": {
+      "type": "REST_Webhook",
+      "endpoints": [
+        "/api/v1/inbound-ticket",
+        "/api/v1/slack/actions"
+      ],
+      "supported_sources": [
+        "Zendesk Webhook",
+        "SendGrid Inbound Email",
+        "Intercom",
+        "Direct API"
+      ]
+    },
+    "context_enrichment": {
+      "database": "PostgreSQL",
+      "query_pattern": "SELECT * FROM enterprise_accounts WHERE contact_email = :sender",
+      "vip_arr_threshold_usd": 25000.0,
+      "vip_acceleration_enabled": true
+    },
+    "cognitive_router": {
+      "classifier_model": "gpt-4o",
+      "temperature": 0.0,
+      "supports_compound_intents": true,
+      "sentiment_scale": "1.0 to 10.0",
+      "supported_intents": [
+        "TECHNICAL_SUPPORT",
+        "BILLING_INQUIRY",
+        "BILLING_DISPUTE",
+        "COMPOUND_TECHNICAL_BILLING",
+        "ACCOUNT_RETENTION_CRITICAL",
+        "SECURITY_FLAG_HOSTILE_INJECTION",
+        "GENERAL_INQUIRY"
+      ]
+    },
+    "specialist_swarms": {
+      "tech_specialist": {
+        "role": "Technical Support Specialist",
+        "tool_access": ["READ_ONLY_LOGS", "DOCS_RAG_VECTOR", "INCIDENT_STATUS"],
+        "default_risk": "LOW"
+      },
+      "billing_specialist": {
+        "role": "Billing & Financial Operations Specialist",
+        "tool_access": ["READ_INVOICES", "STRIPE_TRANSACTION_QUERY", "SLA_CREDIT_CALCULATOR"],
+        "auto_refund_limit_usd": 100.0,
+        "default_risk": "DYNAMIC_GATED"
+      },
+      "retention_specialist": {
+        "role": "Account Retention Specialist",
+        "tool_access": ["CRM_CONTRACT_INSPECTOR", "CSM_ESCALATION"],
+        "default_risk": "HIGH"
+      },
+      "security_specialist": {
+        "role": "Security Quarantine Specialist",
+        "tool_access": ["SECOPS_INCIDENT_LOGGER"],
+        "default_risk": "HIGH"
+      }
+    },
+    "deterministic_action_gating": {
+      "enforce_strict_separation": true,
+      "auto_refund_threshold_usd": 100.0,
+      "state_mutating_actions": [
+        "FINANCIAL_REFUND",
+        "SLA_DOWNTIME_CREDIT",
+        "ACCOUNT_CANCELLATION",
+        "SUBSCRIPTION_TERMINATION",
+        "TIER_DOWNGRADE",
+        "RESTART_CLUSTER",
+        "PURGE_CACHE"
+      ]
+    },
+    "hitl_governance": {
+      "channel": "#ops-triage-approvals",
+      "delivery_protocol": "Slack Block Kit Interactive Card",
+      "pause_primitive": "langgraph.types.interrupt",
+      "resume_primitive": "langgraph.types.Command(resume=...)",
+      "timeout_hours": 4,
+      "timeout_fallback": "Tier-3 On-Call Ops Pager"
+    },
+    "audit_compliance": {
+      "target_table": "action_audit_log",
+      "mode": "APPEND_ONLY",
+      "captured_attributes": [
+        "audit_id",
+        "ticket_id",
+        "action_type",
+        "risk_level",
+        "action_payload",
+        "approval_required",
+        "approval_status",
+        "approved_by_user",
+        "execution_result",
+        "timestamp"
+      ]
+    }
+  },
+  "sla_policies": {
+    "ENTERPRISE_VIP": {
+      "arr_min_usd": 25000.0,
+      "sla_response_minutes": 15,
+      "priority_channel": "Dedicated Slack CSM Channel",
+      "multiplier": 2.5
+    },
+    "PRO": {
+      "arr_min_usd": 10000.0,
+      "sla_response_minutes": 60,
+      "priority_channel": "Standard Priority Queue",
+      "multiplier": 2.0
+    },
+    "STANDARD": {
+      "arr_min_usd": 0.0,
+      "sla_response_minutes": 240,
+      "priority_channel": "Standard Queue",
+      "multiplier": 1.5
+    }
+  },
+  "environment_variables": {
+    "OPENAI_API_KEY": "Required for GPT-4o intent classification and specialist reasoning",
+    "SLACK_BOT_TOKEN": "Bot token with chat:write and incoming-webhook scopes",
+    "SLACK_SIGNING_SECRET": "HMAC secret to verify interactive button callbacks",
+    "SLACK_APPROVALS_CHANNEL": "Channel ID for ops team approval cards (e.g. C08472910)",
+    "STRIPE_API_KEY": "Stripe secret key for deterministic refund execution",
+    "DATABASE_URL": "PostgreSQL connection string for persistent checkpointing and audit logs"
+  },
+  "file_manifest": {
+    "router": "router.py",
+    "swarm": "swarm.py",
+    "documentation": "README.md",
+    "configuration": "blueprint.json"
+  }
+}

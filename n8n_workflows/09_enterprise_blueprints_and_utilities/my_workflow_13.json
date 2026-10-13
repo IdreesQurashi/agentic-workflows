@@ -1,0 +1,97 @@
+{
+  "updatedAt": "2026-10-02T17:16:41.351Z",
+  "createdAt": "2026-10-02T17:15:36.132Z",
+  "id": "wx5c5NHxUQwW6luI",
+  "name": "My workflow 13",
+  "description": null,
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "294fbccc-c452-49fe-aceb-ae4e95e93c9b",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "chatId": "8778991206",
+        "text": "testing Ali Bhai, you don't need to reply",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8dedd238-c561-44e3-9b85-ea97d582470a",
+      "name": "Send a text message",
+      "webhookId": "6993cede-4705-44e9-b2a2-765bd90a7801",
+      "credentials": {
+        "telegramApi": {
+          "id": "e8R5nfthjmO3nQpL",
+          "name": "n8nadministrator"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "73ea3b98-232a-4da2-a25b-e9436353b839",
+  "activeVersionId": null,
+  "versionCounter": 8,
+  "triggerCount": 0,
+  "sourceWorkflowId": null,
+  "tags": [],
+  "shared": [
+    {
+      "updatedAt": "2026-10-02T17:15:36.137Z",
+      "createdAt": "2026-10-02T17:15:36.137Z",
+      "role": "workflow:owner",
+      "workflowId": "wx5c5NHxUQwW6luI",
+      "projectId": "KLOSq8UgfGaGpiHV",
+      "project": {
+        "updatedAt": "2026-09-09T23:49:47.008Z",
+        "createdAt": "2026-09-09T23:48:42.582Z",
+        "id": "KLOSq8UgfGaGpiHV",
+        "name": "Idrees Qurashi <idreesqurashi6@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "customTelemetryTags": [],
+        "creatorId": "2b626098-c438-467e-8beb-c44bcf136da3"
+      }
+    }
+  ],
+  "versionMetadata": {
+    "name": null,
+    "description": null
+  }
+}
